@@ -1,4 +1,5 @@
 node_modules
+dist
 public
 /client/vite.config.ts
 /client/dist

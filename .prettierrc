@@ -3,18 +3,5 @@
   "trailingComma": "none",
   "arrowParens": "avoid",
   "endOfLine": "auto",
-  "semi": true,
-  "importOrder": [
-    "^@components/(.*)$",
-    "^@hooks/(.*)$",
-    "^@utils/(.*)$",
-    "^@customTypes/(.*)$",
-    "^@constants",
-    "^@lib/(.*)$",
-    "^@public/(.*)$",
-    "^@styles/(.*)$",
-    "^[./]"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "semi": true
 }
