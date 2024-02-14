@@ -10,10 +10,12 @@ agilityRouter.all('/*', async (req: Request, res: Response) => {
     const response = await agilityApiClient({
       method: req.method,
       url: req.url,
-      data: req.body
+      data: req.body,
+      params: req.params
     });
     return res.status(response.status).json(response.data);
   } catch (err) {
+    console.log(err);
     if (err.response) {
       return res.status(err.response.status).json(err.response.data);
     }

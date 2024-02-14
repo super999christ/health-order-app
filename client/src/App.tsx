@@ -1,10 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
+import { getProductCatalog } from './apis/products';
+import { submitOrder } from './apis/orders';
 
 function App() {
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    getProductCatalog(178804).then(res => console.log({ res }));
+    submitOrder({
+      facilityCode: 'string',
+      department: 'string',
+      patientRoom: 'string',
+      bed: 'string',
+      orderCreatorFirstName: 'string',
+      orderCreatorLastName: 'string',
+      orderCreatorPhoneNumber: 'string',
+      orderType: 'string',
+      orderID: 'string',
+      patientID: 'string',
+      patientFirstName: 'string',
+      patientLastName: 'string',
+      requestedItem: 'string',
+      specialInstructions: 'string',
+      facility: 'string',
+      orderStatus: 'string',
+      admissionDateTime: '2024-01-29T06:21:53.354Z'
+    }).then(res => console.log({ res }));
+  }, []);
 
   return (
     <>
