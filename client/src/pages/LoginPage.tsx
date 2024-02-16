@@ -1,6 +1,32 @@
+import { login } from '@root/apis/login';
 import LogoIcon from '@root/assets/images/logo.png';
+import Environment from '@root/constants/base';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
 export default function LoginPage() {
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const { data } = await login(userName, password);
+      const { accessToken, refreshToken } = data;
+      localStorage.setItem(Environment.STORAGE.ACCESS_TOKEN, accessToken);
+      localStorage.setItem(Environment.STORAGE.REFRESH_TOKEN, refreshToken);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onUserNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setUserName(event.target.value);
+  };
+
+  const onPasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
   return (
     <div className='flex flex-col lg:mt-[80px] mx-auto w-fit pl-10 lg:pl-6 pr-6 pb-10 bg-gray-100 border rounded-3xl'>
       <div>
@@ -19,7 +45,7 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-10 sm:w-full sm:max-w-sm">
-            <form className="space-y-6" action="#" method="POST">
+            <form className="space-y-6" onSubmit={onSubmit} action='#'>
               <div>
                 <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900 text-left">
                   User name
@@ -29,7 +55,8 @@ export default function LoginPage() {
                     id="username"
                     name="username"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md px-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    onChange={onUserNameChange}
                   />
                 </div>
               </div>
@@ -47,7 +74,8 @@ export default function LoginPage() {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    onChange={onPasswordChange}
                   />
                 </div>
               </div>
