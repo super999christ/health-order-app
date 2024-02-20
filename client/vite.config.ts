@@ -1,31 +1,35 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
-import { resolve } from "path";
-import svgr from "vite-plugin-svgr";
+import fs from 'fs';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
+import svgr from 'vite-plugin-svgr';
 
 const host = process.env.HOST || true;
-const port = +(process.env.PORT || 5173);
-const projectRoot = resolve(__dirname, "src");
+const port = +(process.env.PORT || 3000);
+const projectRoot = resolve(__dirname, 'src');
 
 export default defineConfig(() => {
   return {
-    root: "./src",
-    server: { host, port },
-    preview: { host, port },
-    plugins: [
-      svgr(),
-      react(),
-    ],
+    root: './src',
+    server: {
+      https: {
+        key: fs.readFileSync('./ssl/server.key'),
+        cert: fs.readFileSync('./ssl/server.crt')
+      },
+      host,
+      port
+    },
+    plugins: [svgr(), react()],
     build: {
-      outDir: "../build",
-      sourcemap: true,
+      outDir: '../build',
+      sourcemap: true
     },
     envDir: '..',
     resolve: {
       alias: {
-        "@root": projectRoot,
-        "~": projectRoot,
-      },
-    },
+        '@root': projectRoot,
+        '~': projectRoot
+      }
+    }
   };
 });

@@ -7,7 +7,7 @@ import { commonRouter } from './routes/common';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
-const port = 3000;
+const port = 8000;
 
 app.use(cors());
 app.use(express.json());
