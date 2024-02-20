@@ -1,21 +1,34 @@
 import { login } from '@root/apis/login';
 import LogoIcon from '@root/assets/images/logo.png';
+import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
+import { useAuthContext } from '@root/hooks/useAuthContext';
 import { ChangeEvent, FormEvent, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 export default function LoginPage() {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+  const [isProcessing, setProcessing] = useState(false);
+  const { setLoggedIn } = useAuthContext();
+  const navigate = useNavigate();
   
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
+      setProcessing(true);
       const { data } = await login(userName, password);
       const { accessToken, refreshToken } = data;
       localStorage.setItem(Environment.STORAGE.ACCESS_TOKEN, accessToken);
       localStorage.setItem(Environment.STORAGE.REFRESH_TOKEN, refreshToken);
+      setLoggedIn(true);
+      navigate('/order/submit');
     } catch (err) {
       console.error(err);
+      setError(true);
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -28,15 +41,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className='flex flex-col lg:mt-[80px] mx-auto w-fit pl-10 lg:pl-6 pr-6 pb-10 bg-gray-100 border rounded-3xl'>
-      <div>
+    <div className='flex flex-col lg:mt-[80px] mx-auto w-fit pl-10 lg:pl-6 pr-6 pb-10 bg-white border rounded-3xl'>
+      <div className='mt-4'>
         <img
           className="mx-auto w-auto"
           src={LogoIcon}
           alt="Agility Company"
         />
       </div>
-      <div className='flex flex-col lg:flex-row justify-center min-h-full flex-1 lg:gap-10 items-center'>
+      <div className='flex flex-col lg:flex-row justify-center min-h-full flex-1 lg:gap-10 items-center items-baseline'>
         <div className="flex flex-col justify-center lg:px-8">
           <div className="sm:w-full sm:max-w-sm">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -55,8 +68,9 @@ export default function LoginPage() {
                     id="username"
                     name="username"
                     required
-                    className="block w-full rounded-md px-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className={`input-field bg-white`}
                     onChange={onUserNameChange}
+                    disabled={isProcessing}
                   />
                 </div>
               </div>
@@ -74,30 +88,35 @@ export default function LoginPage() {
                     type="password"
                     autoComplete="current-password"
                     required
-                    className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className={`input-field bg-white`}
                     onChange={onPasswordChange}
+                    disabled={isProcessing}
                   />
                 </div>
               </div>
-
-              <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign in
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="default-button"
+                disabled={isProcessing}
+              >
+                {isProcessing && <Spinner />}
+                Sign in
+              </button>
+              {error && (
+                <div className='error !mt-4'>
+                  The username or password you entered is invalid.
+                </div>
+              )}
             </form>
 
-            <p className="mt-10 text-center text-sm text-gray-500">
+            <p className="mt-8 text-center text-sm text-gray-500">
               Forgot Password?
               <br />
               Please contact the Agiliti Service Desk at (952) 893-3289, Option 1
             </p>
           </div>
         </div>
-        <div className="flex flex-col lg:px-8 lg:border-l-[1px] border-l-gray-200">
+        <div className="flex flex-col lg:px-8 lg:border-l-[1px] border-l-gray-200 self-baseline">
           <div className="w-full max-w-sm">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-700 underline underline-offset-8">
               Register

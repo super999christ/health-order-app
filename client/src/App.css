@@ -4,21 +4,20 @@
 
 body {
   min-height: 100vh;
-  background: center;
+  background: #f0f0f0;
 }
 
 .gradient--3 {
-  --gradient-start: #ABC7FF;
+  --gradient-start: #abc7ff;
   --gradient-start-text: '#ABC7FF';
-  --gradient-end: #C1E3FF;
+  --gradient-end: #c1e3ff;
   --gradient-end-text: '#C1E3FF';
 }
 
 #root {
-  padding: 2rem;
-  text-align: center;
   font-family: 'Roman';
-  height: 100vh;
+  min-height: 100vh;
+  @apply p-4 sm:p-8;
 }
 
 .logo {
@@ -36,7 +35,7 @@ body {
 
 @font-face {
   font-family: 'Roman';
-  src: url("assets/fonts/Inter-roman.var.woff2") format("woff2"),
+  src: url('assets/fonts/Inter-roman.var.woff2') format('woff2');
 }
 
 a {
@@ -70,4 +69,36 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.input-field {
+  @apply text-sm h-9 disabled:bg-gray-100 text-gray-800 border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 w-full focus-visible:outline-none focus-visible:border-gray-500 bg-white;
+}
+
+.textarea-field {
+  @apply text-sm disabled:bg-gray-100 min-h-24 max-h-36 text-gray-800 border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 w-full focus-visible:outline-none focus-visible:border-gray-500 bg-white;
+}
+
+.default-button {
+  @apply flex w-full items-center justify-center rounded-md bg-indigo-600 disabled:bg-indigo-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+}
+
+.back-button {
+  @apply flex w-full items-center justify-center rounded-md bg-yellow-600 disabled:bg-yellow-400 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-yellow-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600;
+}
+
+.order-button {
+  @apply flex items-center justify-center rounded-md bg-green-600 disabled:bg-green-400 px-2 py-0.5 text-sm font-normal leading-6 text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 hover:border-green-500 focus:outline-none;
+}
+
+.open-button {
+  @apply flex items-center justify-center rounded-md bg-blue-600 disabled:bg-blue-400 px-2 py-0.5 text-sm font-normal leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 hover:border-blue-500 focus:outline-none;
+}
+
+.icon-button {
+  @apply flex justify-center items-center border-none bg-transparent w-fit absolute right-6 top-6;
+}
+
+.error {
+  @apply text-sm text-red-700
 }

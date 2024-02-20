@@ -1,14 +1,17 @@
-import { AuthContext } from "@root/providers/AuthProvider";
-import { useContext } from 'react';
+import { useAuthContext } from "@root/hooks/useAuthContext";
+import { useFhirContext } from "@root/hooks/useFhirContext";
 import type { RouteProps } from 'react-router-dom';
 import { Navigate, Outlet } from 'react-router-dom';
 
 export const PublicRoute: React.FC<RouteProps> = () => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isFhirLoggedIn } = useFhirContext();
+  const { isLoggedIn } = useAuthContext();
 
-  // Immediately navigate to dashboard if authenticated
-  if (isLoggedIn) {
-    return <Navigate to="/dashboard" replace />;
+  if (!isFhirLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
+  if (isFhirLoggedIn && isLoggedIn && window.location.pathname === '/login') {  
+    return <Navigate to="/order/submit" replace />;
   }
 
   return <Outlet />;
