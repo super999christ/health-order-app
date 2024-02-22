@@ -50,10 +50,11 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     syncSessionStorage();
     SMART.ready().then(client => {
-      // if (!client.getIdToken()) {
-      //   throw Error("Patient not selected");
-      // }
+      if (!client.getIdToken()) {
+        throw Error("Patient not selected");
+      }
       setFhirClient(client);
+      console.log({ client });
     }).catch(err => {
       console.log("Fhir authentication error: ", err);
       oauth2();
