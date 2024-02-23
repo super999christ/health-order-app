@@ -14,7 +14,7 @@ export default function GlobalRouter() {
         <Route path='/' element={<HomePage />} />
         <Route path='/order/submit' element={<OrderSubmissionPage />} />
         <Route path='/order/list' element={<OrderListPage />} />
-        <Route path='/order/view' element={<OrderViewPage />} />
+        <Route path='/order/view/:orderId' element={<OrderViewPage />} />
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/login' element={<LoginPage />} />

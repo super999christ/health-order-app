@@ -6,14 +6,37 @@ import { useNavigate } from 'react-router';
 
 export default function OrderListPage() {
   const navigate = useNavigate();
-  
-  const onOpenOrder = () => {
-    navigate('/order/view');
-  };
 
   const onNewOrder = () => {
     navigate('/order/submit');
   };
+
+  const mockOrders = [
+    {
+      name: 'Giacomo Guilizzon',
+      visit: 'CSN3245',
+      status: 'OPEN',
+      orderId: '324323',
+      equipment: 'Lazer Box',
+      lastUpdated: 'Last Updated'
+    },
+    {
+      name: 'Giacomo Guilizzon',
+      visit: 'CSN3245',
+      status: 'CLOSED',
+      orderId: '123456',
+      equipment: 'Lazer Box',
+      lastUpdated: 'Last Updated'
+    },
+    {
+      name: 'Giacomo Guilizzon',
+      visit: 'CSN3245',
+      status: 'OPEN',
+      orderId: '123589',
+      equipment: 'Lazer Box',
+      lastUpdated: 'Last Updated'
+    },
+  ];
 
   return (
     <div className="flex flex-col lg:mt-[80px] mb-8 mx-auto w-fit p-6 bg-white border rounded-3xl max-w-[1050px]">
@@ -30,8 +53,9 @@ export default function OrderListPage() {
           <h1 className="text-2xl leading-snug text-gray-800 font-semibold mb-2">
             Explore Orders
           </h1>
-          <div className="text-sm lg:max-w-[650px]">
+          <div className="text-sm lg:w-[850px]">
             Browse and discover existing healthcare orders quickly and easily.
+            <br />
             Search past orders by patient, date, doctor or type of order to find
             the details you need.
           </div>
@@ -57,51 +81,58 @@ export default function OrderListPage() {
           </div>
         </div>
         <div className='flex flex-wrap justify-center lg:justify-around items-center gap-6 mt-4'>
-          {[0, 1, 2, 3].map((value) => (
-            <div key={value} className="max-w-[450px] lg:max-w-[450px] flex flex-col p-5 border border-gray-200 border-solid rounded-2xl drop-shadow-sm bg-gray-50">
-              <div className="flex items-center gap-4">
-                <div className="flex-none w-[68px] h-[68px] bg-red rounded-full flex justify-center items-center bg-purple-700 text-white text-[24px]">
-                  RC
-                </div>
-                <div className="flex gap-2 flex-wrap flex-row gap-x-6 gap-y-2">
-                  <div className="text-gray-500 font-normal">
-                    Order Number
-                    <div className="text-black">#1210</div>
-                  </div>
-                  <div className="text-gray-500 font-normal">
-                    Patient Name
-                    <div className="text-black">Randall Christ</div>
-                  </div>
-                  <div className="text-gray-500 font-normal w-fit">
-                    Status
-                    <div className="rounded-md bg-blue-500/10 px-2 py-1 text-sm font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
-                      Open
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead>
+              <tr>
+                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                  #
+                </th>
+                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                  Name
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Visit
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Status
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  OrderID
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Equipment
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Last Updated
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {mockOrders.map((order, index) => (
+                <tr key={order.orderId} className='text-gray-900 even:bg-gray-50'>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{index + 1}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{order.name}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.visit}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">
+                    <div className="rounded-md text-center bg-blue-500/10 py-1 text-sm font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
+                      {order.status}
                     </div>
-                  </div>
-                  <div className="text-gray-500 font-normal">
-                    Last Update
-                    <div className="text-black">
-                      Nov 11th, 2019 at 3:27 PM
-                    </div>
-                  </div>
-                  <div className="text-gray-500 font-normal">
-                    Hospital
-                    <div className="text-black">Floor | 102 |</div>
-                  </div>
-                </div>
-              </div>
-              <hr className="my-2" />
-              <div className="flex gap-4">
-                <div className="text-gray-500 text-md px-2 break-all">
-                  This order requests an x-ray of the left shoulder to evaluate pain
-                  reported after a fall.
-                </div>
-              </div>
-              <div className='flex justify-end'>
-                <button className='open-button' onClick={() => onOpenOrder()}>Open</button>
-              </div>
-            </div>
-          ))}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.orderId}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.equipment}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.lastUpdated}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">
+                    <a href={`/order/view/${order.orderId}`} className="text-indigo-600 hover:text-indigo-900">
+                      View
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

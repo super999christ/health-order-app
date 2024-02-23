@@ -1,12 +1,26 @@
 import Environment from '@root/constants/base';
 import { oauth2 as SMART } from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
+import { fhirclient } from 'fhirclient/lib/types';
 import { PropsWithChildren, createContext, useEffect, useState } from 'react';
 import { Nullable } from 'vitest';
+
+export interface IPatient extends fhirclient.FHIR.Patient {
+  name?: {
+    use: string;
+    text: string;
+    family: string;
+    given: string[];
+  }[];
+}
+
+export interface IEncounter extends fhirclient.FHIR.Encounter {}
 
 export interface IFhirClientContextProps {
   fhirClient: Nullable<Client>;
   isFhirLoggedIn: boolean;
+  patient: Nullable<IPatient>;
+  encounter: Nullable<fhirclient.FHIR.Encounter>;
 }
 
 export const oauth2 = () => {
@@ -22,6 +36,8 @@ export const oauth2 = () => {
 export const FhirClientContext = createContext<IFhirClientContextProps>({
   fhirClient: null,
   isFhirLoggedIn: false,
+  patient: null,
+  encounter: null,
 });
 
 const syncSessionStorage = () => {
@@ -46,6 +62,8 @@ const syncSessionStorage = () => {
 
 export const FhirClientProvider = ({ children }: PropsWithChildren) => {
   const [fhirClient, setFhirClient] = useState<Nullable<Client>>(null);
+  const [patient, setPatient] = useState<Nullable<IPatient>>(null);
+  const [encounter, setEncounter] = useState<Nullable<IEncounter>>(null);
 
   useEffect(() => {
     syncSessionStorage();
@@ -61,8 +79,28 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (fhirClient) {
+      fhirClient.patient.read()
+        .then(res => {
+          setPatient(res);
+        })
+        .catch(err => {
+          console.log("Fhir patient error: ", err);
+          oauth2();
+        });
+      fhirClient.encounter.read()
+        .then(res => {
+          setEncounter(res);
+        }).catch(err => {
+          console.log("Fhir encounter error: ", err);
+          // oauth2();
+        })
+    }
+  }, [fhirClient]);
+
   return (
-    <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient }}>
+    <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient, patient, encounter }}>
       {children}
     </FhirClientContext.Provider>
   );
