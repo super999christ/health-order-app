@@ -1,27 +1,9 @@
 import Environment from '@root/constants/base';
+import { IEncounter, IFhirClientContextProps, IPatient } from '@root/types/fhir.type';
 import { oauth2 as SMART } from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
-import { fhirclient } from 'fhirclient/lib/types';
 import { PropsWithChildren, createContext, useEffect, useState } from 'react';
 import { Nullable } from 'vitest';
-
-export interface IPatient extends fhirclient.FHIR.Patient {
-  name?: {
-    use: string;
-    text: string;
-    family: string;
-    given: string[];
-  }[];
-}
-
-export interface IEncounter extends fhirclient.FHIR.Encounter {}
-
-export interface IFhirClientContextProps {
-  fhirClient: Nullable<Client>;
-  isFhirLoggedIn: boolean;
-  patient: Nullable<IPatient>;
-  encounter: Nullable<fhirclient.FHIR.Encounter>;
-}
 
 export const oauth2 = () => {
   return SMART.authorize({
@@ -94,7 +76,7 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
           setEncounter(res);
         }).catch(err => {
           console.log("Fhir encounter error: ", err);
-          // oauth2();
+          oauth2();
         })
     }
   }, [fhirClient]);

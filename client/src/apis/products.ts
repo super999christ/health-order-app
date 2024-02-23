@@ -1,16 +1,17 @@
+import { IProductCatatogItem } from "@root/types/product.type";
 import { apiClient } from "../constants/api";
 import Environment from "../constants/base";
 
-export const getProductCatalog = async (accountId: number) => {
+export const getProductCatalog = async (facilityCode: string): Promise<IProductCatatogItem[]> => {
   try {
     const response = await apiClient.get(Environment.API.CATALOG_INFO, {
       params: {
-        AccountId: accountId
+        facilityCode
       }
     });
     return response.data.result;
   } catch (err) {
     console.error(err);
-    return null;
+    return [];
   }
 };
