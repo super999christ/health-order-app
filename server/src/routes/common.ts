@@ -6,7 +6,7 @@ import { generateAccessToken } from '../utils/jwt';
 
 const commonRouter = Router();
 
-commonRouter.post('/userAuthentication', async (req, res) => {
+commonRouter.post('/login', async (req, res) => {
   let result: AxiosResponse;
   try {
     // result = await agilityApiClient.post('/api/userAuthentication', req.body);
