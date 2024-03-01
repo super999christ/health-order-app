@@ -1,3 +1,5 @@
+import { apiClient } from "@root/constants/api";
+import Environment from "@root/constants/base";
 import { jwtDecode } from "jwt-decode";
 
 export const isTokenValid = (token: string) => {
@@ -12,5 +14,19 @@ export const isTokenValid = (token: string) => {
   } catch (err) {
     console.log("Token validation error: ", err);
     return false;
+  }
+};
+
+export const logout = () => {
+  localStorage.clear();
+  window.location.reload();
+};
+
+export const refreshTokenRotate = async (refreshToken: string) => {
+  try {
+    const res = await apiClient.post(Environment.API.ROTATE_TOKEN, { refreshToken });
+    return res.data;
+  } catch (err) {
+    console.log("Error while refreshing token: ", err);
   }
 };
