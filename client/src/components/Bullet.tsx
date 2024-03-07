@@ -13,7 +13,7 @@ export const Bullet = ({ status, className }: IBulletProps ) => {
   }
   return (
     <span className={className}>
-      <svg className={`h-3 w-3 ${color[status]}`} viewBox="0 0 12 12" aria-hidden="true">
+      <svg className={`h-3 w-3 ${color[status]} inline`} viewBox="0 0 14 14" aria-hidden="true">
         <circle cx={6} cy={6} r={6} />
       </svg>
       <span className="hidden fill-red-500 fill-green-500 fill-yellow-500 fill-blue-500"></span>

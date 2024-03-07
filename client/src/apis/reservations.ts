@@ -12,7 +12,7 @@ export const createReservation = async (reservationData: unknown) => {
 
 export const getReservations = async () => {
   try {
-    const res = await apiClient.post(Environment.API.GET_RESERVATIONS);
+    const res = await apiClient.get(Environment.API.GET_RESERVATIONS);
     return res.data;
   } catch (err) {
     console.log("Error while getting reservations: ", err);

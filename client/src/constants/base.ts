@@ -4,11 +4,11 @@ const Environment = {
   API: {
     CATALOG_INFO: '/api/agility/emrorderingapi/api/GetCatalogInfo',
     SUBMIT_ORDER: '/api/agility/emrorderingapi/api/SubmitOrder',
-    GET_ORDERS: '/api/agility/emrorderingapi/api/GetOrders',
+    GET_ORDERS: '/api/common/orders',
     LOGIN: '/api/common/login',
     ROTATE_TOKEN: '/api/common/token-refresh',
-    CREATE_RESERVATION: '/api/agility/reservationapi/api/newReservations',
-    GET_RESERVATIONS: '/api/agility/reservationapi/api/getReservations',
+    CREATE_RESERVATION: '/api/agility/reservationapi/scheduler/api/newreservations',
+    GET_RESERVATIONS: '/api/agility/reservationapi/scheduler/api/getreservations',
   },
   STORAGE: {
     ACCESS_TOKEN: 'access_token',

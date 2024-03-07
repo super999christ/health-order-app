@@ -23,7 +23,9 @@ export default function LoginPage() {
       localStorage.setItem(Environment.STORAGE.ACCESS_TOKEN, accessToken);
       localStorage.setItem(Environment.STORAGE.REFRESH_TOKEN, refreshToken);
       setLoggedIn(true);
-      navigate('/order/submit');
+      setTimeout(() => {
+        navigate('/order/submit');
+      }, 500);
     } catch (err) {
       console.error(err);
       setError(true);

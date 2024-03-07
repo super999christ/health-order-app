@@ -11,9 +11,9 @@ export const submitOrder = async (order: unknown) => {
   }
 };
 
-export const getOrders = async (facilityCode: string) => {
+export const getOrders = async (patientID: string) => {
   try {
-    const response = await apiClient.get(Environment.API.GET_ORDERS, { params: { facilityCode } });
+    const response = await apiClient.get(Environment.API.GET_ORDERS, { params: { patientID } });
     return response.data;
   } catch (err) {
     console.error(err);
