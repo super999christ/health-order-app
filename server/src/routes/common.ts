@@ -2,6 +2,7 @@ import type { AxiosResponse } from 'axios';
 import { Router } from 'express';
 
 import { agilityApiClient } from '../constants/api';
+import { globalStore } from '../services/azure';
 import { generateAccessToken } from '../utils/jwt';
 
 const commonRouter = Router();
@@ -9,9 +10,8 @@ const commonRouter = Router();
 commonRouter.post('/login', async (req, res) => {
   let result: AxiosResponse;
   try {
-    // result = await agilityApiClient.post('/api/userAuthentication', req.body);
     result = await agilityApiClient.post(
-      'https://ail-apigateway-dev.agilitihealth.com/scheduler/api/userAuthentication',
+      '/scheduler/api/userAuthentication',
       req.body
     );
     if (result.data.USERVERIFIED) {
@@ -31,6 +31,14 @@ commonRouter.post('/login', async (req, res) => {
     };
   }
   res.status(result.status).send(result.data);
+});
+
+commonRouter.get('/orders', async (req, res) => {
+  const patientID = req.query.patientID as string;
+  const orders = globalStore.orders.filter(
+    order => order.PatientID === patientID
+  );
+  res.status(200).send(orders);
 });
 
 export { commonRouter };

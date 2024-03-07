@@ -10,7 +10,9 @@ dotenv.config({ path: path.join(dirname, '../../.env') });
 const Environment = {
   OCP_APIM_SUBSCRIPTION_KEY: process.env.OCP_APIM_SUBSCRIPTION_KEY,
   AGILITY_BASE_URL: process.env.AGILITY_BASE_URL,
+  AGILITY_SCHEDULER_BASE_URL: process.env.AGILITY_SCHEDULER_BASE_URL,
   ACCOUNT_ID: process.env.ACCOUNT_ID,
+  AZURE_EVENT_HUB_CONNECTION: process.env.AZURE_EVENT_HUB_CONNECTION,
   TOKEN_SECRET: process.env.TOKEN_SECRET
 };
 

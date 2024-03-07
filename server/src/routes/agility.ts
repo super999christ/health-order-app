@@ -9,9 +9,12 @@ agilityRouter.all('/*', async (req: Request, res: Response) => {
   try {
     const response = await agilityApiClient({
       method: req.method,
-      url: req.url,
+      url: req.url.replace('/reservationapi', ''),
       data: req.body,
-      params: req.params
+      params: req.params,
+      headers: {
+        USERID: req.user.userId
+      }
     });
     return res.status(response.status).json(response.data);
   } catch (err) {
