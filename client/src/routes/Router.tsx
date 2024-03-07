@@ -6,6 +6,9 @@ import HomePage from '@root/pages/HomePage';
 import OrderSubmissionPage from '@root/pages/Order/OrderSubmissionPage';
 import OrderListPage from '@root/pages/Order/OrderListPage';
 import OrderViewPage from '@root/pages/Order/OrderViewPage';
+import CalendarPage from '@root/pages/Reservation/Calendar/CalendarPage';
+import ReservationDetailPage from '@root/pages/Reservation/Detail/ReservationDetailPage';
+import ReservationSubmitPage from '@root/pages/Reservation/Submit/ReservationSubmitPage';
 
 export default function GlobalRouter() {
   return (
@@ -15,6 +18,9 @@ export default function GlobalRouter() {
         <Route path='/order/submit' element={<OrderSubmissionPage />} />
         <Route path='/order/list' element={<OrderListPage />} />
         <Route path='/order/view/:orderId' element={<OrderViewPage />} />
+        <Route path='/reservation/calendar' element={<CalendarPage />} />
+        <Route path='/reservation/detail' element={<ReservationDetailPage />} />
+        <Route path='/reservation/submit' element={<ReservationSubmitPage />} />
       </Route>
       <Route element={<PublicRoute />}>
         <Route path='/login' element={<LoginPage />} />

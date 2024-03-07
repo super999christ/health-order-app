@@ -12,11 +12,11 @@ import { extractCustomerComment } from '@root/utils/reservation'
 import { DateConst } from '@root/constants/date';
 import { getReservations } from '@root/apis/reservations'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons'
+import { faChevronDown, faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import { LoadingOverlay } from '@root/components/LoadingOverlay'
+import LogoIcon from '@root/assets/images/logo.png';
 
 enum VIEW_UNIT {
-  DAY,
   WEEK,
   MONTH
 }
@@ -134,7 +134,7 @@ export default function CalendarPage() {
   }
 
   const getCurrentDate = () => {
-    if (viewUnit === VIEW_UNIT.DAY)
+    if (viewUnit === VIEW_UNIT.WEEK)
       return `${DateConst.monthNames[month]} ${day}, ${year}`;
     else
       return `${DateConst.monthNames[month]} ${year}`;
@@ -220,7 +220,7 @@ export default function CalendarPage() {
   const onViewEvent = (event: any) => {
     const item = reservationRawData.find((r) => r.CASEQCID === event.id);
     localStorage.setItem("currentReservation", JSON.stringify(item));
-    navigate("/detail");
+    navigate("/reservation/detail");
   }
 
   const onViewUnitChange = (unit: number) => {
@@ -230,6 +230,13 @@ export default function CalendarPage() {
 
   return (
     <div>
+      <div className="mb-2 text-center">
+        <img
+          className="mt-4 inline-flex rounded-full"
+          src={LogoIcon}
+          alt="User"
+        />
+      </div>
       {isLoading && <LoadingOverlay />}
       <div className="lg:flex lg:h-full lg:flex-col">
         <header className="block sm:flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
@@ -244,7 +251,7 @@ export default function CalendarPage() {
                 onClick={() => onPreviousClick()}
               >
                 <span className="sr-only">Previous year</span>
-                <FontAwesomeIcon icon={faChevronLeft} className='h-5 w-5' />
+                <FontAwesomeIcon icon={faChevronLeft} className='h-3 w-3' />
               </button>
               <button
                 type="button"
@@ -259,7 +266,7 @@ export default function CalendarPage() {
                 onClick={() => onNextClick()}
               >
                 <span className="sr-only">Next year</span>
-                <FontAwesomeIcon icon={faChevronLeft} className='h-5 w-5' />
+                <FontAwesomeIcon icon={faChevronRight} className='h-3 w-3' />
               </button>
             </div>
             <div className="ml-4 flex items-center">
@@ -269,7 +276,7 @@ export default function CalendarPage() {
                   className="flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 >
                   {DateConst.monthNames[month]}
-                  <FontAwesomeIcon icon={faChevronLeft} className='-mr-1 h-5 w-5 text-gray-400' />
+                  <FontAwesomeIcon icon={faChevronDown} className='-mr-1 h-3 w-3 text-gray-400' />
                 </Menu.Button>
                 <Transition
                   as={Fragment}
@@ -307,7 +314,7 @@ export default function CalendarPage() {
                   className="flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 whitespace-nowrap"
                 >
                   {VIEW_UNIT_NAMES[viewUnit]}
-                  <FontAwesomeIcon icon={faChevronLeft} className='-mr-1 h-5 w-5 text-gray-400' />
+                  <FontAwesomeIcon icon={faChevronDown} className='-mr-1 h-3 w-3 text-gray-400' />
                 </Menu.Button>
 
                 <Transition
@@ -342,10 +349,10 @@ export default function CalendarPage() {
               <Menu as="div" className="relative ml-2 md:ml-6">
                 <Menu.Button
                   type="button"
-                  className="flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 items-center"
                 >
-                  {year}
-                  <FontAwesomeIcon icon={faChevronLeft} className='-mr-1 h-5 w-5 text-gray-400' />
+                  <span>{year}</span>
+                  <FontAwesomeIcon icon={faChevronDown} className='ml-1 h-3 w-3 text-gray-400' />
                 </Menu.Button>
 
                 <Transition
@@ -378,7 +385,7 @@ export default function CalendarPage() {
               </Menu>
               <div
                 className="ml-2 cursor-pointer flex rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 whitespace-nowrap"
-                onClick={() => navigate('/reservation')}
+                onClick={() => navigate('/reservation/submit')}
               >
                 New Reservation
               </div>
@@ -386,8 +393,8 @@ export default function CalendarPage() {
           </div>
         </header>
         {viewUnit === VIEW_UNIT.MONTH && (
-          <div className='flex flex-col-reverse gap-5 sm:flex-row'>
-            <div className='p-3 max-h-[378px] lg:max-h-[666px] overflow-auto'>
+          <div className='flex flex-col-reverse gap-0 sm:flex-row'>
+            <div className='p-3 max-h-[378px] lg:max-h-[666px] overflow-auto bg-white'>
               <CalendarListView events={getEventList()} onViewEvent={onViewEvent} />
             </div>
             <div className='flex-1'>
