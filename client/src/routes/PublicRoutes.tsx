@@ -8,11 +8,11 @@ export const PublicRoute: React.FC<RouteProps> = () => {
   const { isLoggedIn } = useAuthContext();
   const navigate = useNavigate();
 
-  if (!isFhirLoggedIn) {
-    navigate('/');
-  }
-  if (isFhirLoggedIn && isLoggedIn && window.location.pathname === '/login') {  
+  if (isLoggedIn) {
     navigate('/order/submit');
+  }
+  if (isFhirLoggedIn) {
+    navigate('/login');
   }
 
   return <Outlet />;

@@ -12,11 +12,8 @@ export const PrivateRoute: React.FC<RouteProps> = () => {
   if (!isFhirLoggedIn) {
     navigate('/');
   }
-  if (isFhirLoggedIn && !isLoggedIn) {
+  if (!isLoggedIn) {
     navigate('/login');
-  }
-  if (isFhirLoggedIn && isLoggedIn && window.location.pathname === '/') {
-    navigate('/order/submit');
   }
 
   return <Outlet />;

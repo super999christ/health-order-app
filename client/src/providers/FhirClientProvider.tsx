@@ -1,4 +1,5 @@
 import Environment from '@root/constants/base';
+import HomePage from '@root/pages/HomePage';
 import { IEncounter, IFhirClientContextProps, IPatient } from '@root/types/fhir.type';
 import { oauth2 as SMART } from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
@@ -6,6 +7,8 @@ import { PropsWithChildren, createContext, useEffect, useState } from 'react';
 import { Nullable } from 'vitest';
 
 export const oauth2 = () => {
+  localStorage.clear();
+  sessionStorage.clear();
   return SMART.authorize({
     clientId: Environment.FHIR_CLIENT_ID,
     scope: "launch encounter/read launch/smart_style_url launch/patient openid fhirUser user/*.* patient/read offline_access",
@@ -76,14 +79,14 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
           setEncounter(res);
         }).catch(err => {
           console.log("Fhir encounter error: ", err);
-          oauth2();
+          // oauth2();
         })
     }
   }, [fhirClient]);
 
   return (
     <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient, patient, encounter }}>
-      {children}
+      {fhirClient ? children : <HomePage />}
     </FhirClientContext.Provider>
   );
 };
