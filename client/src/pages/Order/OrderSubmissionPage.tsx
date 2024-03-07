@@ -39,20 +39,17 @@ export default function OrderSubmissionPage() {
         orderCreatorFirstName: getOrderCreatorFirstName(),
         orderCreatorLastName: getOrderCreatorLastName(),
         orderCreatorPhoneNumber: phoneNumber,
-        orderType: 'a',
-        orderID: '0',
+        orderCreator: getOrderCreatorFirstName() + ' ' + getOrderCreatorLastName(),
+        orderType: 'NW',
         patientID: patient?.id,
         patientFirstName: patient?.name?.length ? patient.name[0].given[0] : '',
         patientLastName: patient?.name?.length ? patient.name[0].family[0] : '',
-        requestedItem: catalogItems[0].itemName,
+        requestedItem: catalogItems[0].orderCode,
         specialInstructions: specialInstruction,
-        facility: catalogItems[0].facilityName,
-        // orderStatus: "open",
-        // orderData: 'testing order',
-        // orderCreator: "testing order",
-        // admissionDateTime: new Date().toString(),
-        // epicIDNumber: '10000',
-        // priority: 'high'
+        priority: "1",
+        quantity: 2,
+        admissionDateTime: new Date().toString(),
+        epicIDNumber: "EMRApp001",
       });
     } catch (err) {
       console.log("Order submission failed: ", err);
@@ -71,7 +68,7 @@ export default function OrderSubmissionPage() {
 
   const getPatientRoom = () => {
     const location = encounter?.location?.find(loc => loc.physicalType?.text === 'Room');
-    return location?.location.display;
+    return location?.location.display || '4200';
   };
 
   const getOrderCreatorFirstName = () => {
@@ -84,11 +81,12 @@ export default function OrderSubmissionPage() {
 
   const getBedNo = () => {
     const location = encounter?.location?.find(loc => loc.physicalType?.text === 'Bed');
-    return location?.location.identifier?.value;
+    return location?.location.identifier?.value || '4200-01';
   };
 
   const getFacilityCode = () => {
-    return fhirClient?.getState("tokenResponse.facility");
+    return 'GHS';
+    // return fhirClient?.getState("tokenResponse.facility");
   };
 
   const getFacilityName = () => {

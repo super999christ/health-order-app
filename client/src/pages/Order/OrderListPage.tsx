@@ -1,42 +1,59 @@
 import { faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getOrders } from '@root/apis/orders';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LogoutButton } from '@root/components/LogoutButton';
+import { useFhirContext } from '@root/hooks/useFhirContext';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 export default function OrderListPage() {
   const navigate = useNavigate();
+  const { patient } = useFhirContext();
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const patientID = patient?.id as string;
+    getOrders(patientID)
+      .then(res => {
+        setOrders(res);
+      })
+      .catch(err => {
+        console.log("Error while getting orders: ", { patientID }, err);
+      })
+  }, [patient]);
 
   const onNewOrder = () => {
     navigate('/order/submit');
   };
 
-  const mockOrders = [
-    {
-      name: 'Giacomo Guilizzon',
-      visit: 'CSN3245',
-      status: 'OPEN',
-      orderId: '324323',
-      equipment: 'Lazer Box',
-      lastUpdated: 'Last Updated'
-    },
-    {
-      name: 'Giacomo Guilizzon',
-      visit: 'CSN3245',
-      status: 'CLOSED',
-      orderId: '123456',
-      equipment: 'Lazer Box',
-      lastUpdated: 'Last Updated'
-    },
-    {
-      name: 'Giacomo Guilizzon',
-      visit: 'CSN3245',
-      status: 'OPEN',
-      orderId: '123589',
-      equipment: 'Lazer Box',
-      lastUpdated: 'Last Updated'
-    },
-  ];
+  // const mockOrders = [
+  //   {
+  //     name: 'Giacomo Guilizzon',
+  //     visit: 'CSN3245',
+  //     status: 'OPEN',
+  //     orderId: '324323',
+  //     equipment: 'Lazer Box',
+  //     lastUpdated: 'Last Updated'
+  //   },
+  //   {
+  //     name: 'Giacomo Guilizzon',
+  //     visit: 'CSN3245',
+  //     status: 'CLOSED',
+  //     orderId: '123456',
+  //     equipment: 'Lazer Box',
+  //     lastUpdated: 'Last Updated'
+  //   },
+  //   {
+  //     name: 'Giacomo Guilizzon',
+  //     visit: 'CSN3245',
+  //     status: 'OPEN',
+  //     orderId: '123589',
+  //     equipment: 'Lazer Box',
+  //     lastUpdated: 'Last Updated'
+  //   },
+  // ];
 
   return (
     <div className="flex flex-col lg:mt-[80px] mb-8 mx-auto w-fit p-6 bg-white border rounded-3xl max-w-[1050px]">
@@ -111,7 +128,7 @@ export default function OrderListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {mockOrders.map((order, index) => (
+              {orders.map((order: any, index: number) => (
                 <tr key={order.orderId} className='text-gray-900 even:bg-gray-50'>
                   <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{index + 1}</td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{order.name}</td>
@@ -121,13 +138,13 @@ export default function OrderListPage() {
                       {order.status}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.orderId}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.OrderID}</td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm">{order.equipment}</td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm">{order.lastUpdated}</td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm">
-                    <a href={`/order/view/${order.orderId}`} className="text-indigo-600 hover:text-indigo-900">
+                    <Link to={`/order/view/${order.OrderID}`} className="text-indigo-600 hover:text-indigo-900">
                       View
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               ))}
