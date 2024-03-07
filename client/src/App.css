@@ -52,25 +52,6 @@ h1 {
   line-height: 1.1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
 .input-field {
   @apply text-sm h-9 disabled:bg-gray-100 text-gray-800 border rounded leading-5 py-2 px-3 border-gray-200 hover:border-gray-300 focus:border-indigo-300 shadow-sm placeholder-gray-400 w-full focus-visible:outline-none focus-visible:border-gray-500 bg-white;
 }
@@ -101,4 +82,15 @@ button:focus-visible {
 
 .error {
   @apply text-sm text-red-700
+}
+
+*, :after, :before {
+  border: 0 solid #e5e7eb;
+  box-sizing: border-box;
+}
+
+button {
+  @apply outline-0;
+  @apply focus:outline-0;
+  @apply focus-visible:outline-0;
 }
