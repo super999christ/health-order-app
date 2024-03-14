@@ -3,7 +3,7 @@ import { Router } from 'express';
 
 import { agilityApiClient } from '../constants/api';
 import { globalStore } from '../services/azure';
-import { generateAccessToken } from '../utils/jwt';
+import { generateAccessToken, verifyRefreshToken } from '../utils/jwt';
 
 const commonRouter = Router();
 
@@ -39,6 +39,15 @@ commonRouter.get('/orders', async (req, res) => {
     order => order.PatientID === patientID
   );
   res.status(200).send(orders);
+});
+
+commonRouter.post('/token-refresh', async (req, res) => {
+  try {
+    const newToken = await verifyRefreshToken(req.body.refreshToken);
+    res.send({ token: newToken });
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
 export { commonRouter };

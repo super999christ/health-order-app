@@ -1,8 +1,9 @@
 import { faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getOrders } from '@root/apis/orders';
+import { getOrdersByPatient } from '@root/apis/orders';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LogoutButton } from '@root/components/LogoutButton';
+import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -14,14 +15,16 @@ export default function OrderListPage() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const patientID = patient?.id as string;
-    getOrders(patientID)
-      .then(res => {
-        setOrders(res);
-      })
-      .catch(err => {
-        console.log("Error while getting orders: ", { patientID }, err);
-      })
+    const PatientID = patient?.id as string;
+    if (PatientID) {
+      getOrdersByPatient({ PatientID, EpicIDNumber: Environment.EPIC_ID_NUMBER })
+        .then(res => {
+          setOrders(res);
+        })
+        .catch(err => {
+          console.log("Error while getting orders: ", { PatientID }, err);
+        });
+    }
   }, [patient]);
 
   const onNewOrder = () => {

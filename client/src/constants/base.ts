@@ -1,10 +1,11 @@
 const Environment = {
   SERVER_BASE_URL: import.meta.env.VITE_SERVER_BASE_URL,
   FHIR_CLIENT_ID: import.meta.env.VITE_FHIR_CLIENT_ID,
+  EPIC_ID_NUMBER: import.meta.env.VITE_EPIC_ID_NUMBER,
   API: {
     CATALOG_INFO: '/api/agility/emrorderingapi/api/GetCatalogInfo',
     SUBMIT_ORDER: '/api/agility/emrorderingapi/api/SubmitOrder',
-    GET_ORDERS: '/api/common/orders',
+    GET_ORDERS_BY_PATIENT: '/api/agility/emrorderingapi/api/GetOrdersByPatient',
     LOGIN: '/api/common/login',
     ROTATE_TOKEN: '/api/common/token-refresh',
     CREATE_RESERVATION: '/api/agility/reservationapi/scheduler/api/newreservations',

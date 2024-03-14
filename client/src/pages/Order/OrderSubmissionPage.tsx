@@ -5,6 +5,7 @@ import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LogoutButton } from '@root/components/LogoutButton';
 import Spinner from '@root/components/Spinner';
+import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
 import { FormEvent, useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ export default function OrderSubmissionPage() {
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
   const [specialInstruction, setSpecialInstruction] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [quantity] = useState(1);
 
   useEffect(() => {
     const facilityCode = getFacilityCode();
@@ -44,12 +46,12 @@ export default function OrderSubmissionPage() {
         patientID: patient?.id,
         patientFirstName: patient?.name?.length ? patient.name[0].given[0] : '',
         patientLastName: patient?.name?.length ? patient.name[0].family[0] : '',
-        requestedItem: catalogItems[0].orderCode,
+        requestedItem: catalogItems[0]?.orderCode,
         specialInstructions: specialInstruction,
         priority: "1",
-        quantity: 2,
+        quantity,
         admissionDateTime: new Date().toString(),
-        epicIDNumber: "EMRApp001",
+        epicIDNumber: Environment.EPIC_ID_NUMBER,
       });
     } catch (err) {
       console.log("Order submission failed: ", err);
@@ -72,11 +74,11 @@ export default function OrderSubmissionPage() {
   };
 
   const getOrderCreatorFirstName = () => {
-    return fhirClient?.getState("tokenResponse.userFname");
+    return fhirClient?.getState("tokenResponse.userFname") || "Randall";
   }
 
   const getOrderCreatorLastName = () => {
-    return fhirClient?.getState("tokenResponse.userLname");
+    return fhirClient?.getState("tokenResponse.userLname") || "Christ";
   }
 
   const getBedNo = () => {
@@ -94,7 +96,7 @@ export default function OrderSubmissionPage() {
   };
 
   const getDepartmentName = () => {
-    return fhirClient?.getState("tokenResponse.department");
+    return fhirClient?.getState("tokenResponse.department") || "KHMRG";
   };
   
   return (

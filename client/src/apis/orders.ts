@@ -1,5 +1,5 @@
-import { apiClient } from "../constants/api";
-import Environment from "../constants/base";
+import { apiClient } from '../constants/api';
+import Environment from '../constants/base';
 
 export const submitOrder = async (order: unknown) => {
   try {
@@ -11,9 +11,15 @@ export const submitOrder = async (order: unknown) => {
   }
 };
 
-export const getOrders = async (patientID: string) => {
+export const getOrdersByPatient = async (params: {
+  PatientID?: string;
+  EpicIDNumber?: string;
+}) => {
   try {
-    const response = await apiClient.get(Environment.API.GET_ORDERS, { params: { patientID } });
+    const response = await apiClient.get(
+      Environment.API.GET_ORDERS_BY_PATIENT,
+      { params }
+    );
     return response.data;
   } catch (err) {
     console.error(err);

@@ -11,7 +11,7 @@ agilityRouter.all('/*', async (req: Request, res: Response) => {
       method: req.method,
       url: req.url.replace('/reservationapi', ''),
       data: req.body,
-      params: req.params,
+      params: req.query,
       headers: {
         USERID: req.user.userId
       }
