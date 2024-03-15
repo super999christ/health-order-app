@@ -25,7 +25,7 @@ export default function LoginPage() {
       setLoggedIn(true);
       setTimeout(() => {
         navigate('/order/submit');
-      }, 500);
+      }, 1000);
     } catch (err) {
       console.error(err);
       setError(true);

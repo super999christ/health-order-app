@@ -1,14 +1,45 @@
 import { faAngleLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getOrdersByPatient } from '@root/apis/orders';
+import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
+import Environment from '@root/constants/base';
+import { useFhirContext } from '@root/hooks/useFhirContext';
+import { IProductCatatogItem } from '@root/types/product.type';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 export default function OrderViewPage() {
   const [isLoading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
+  const { patient, encounter, fhirClient } = useFhirContext();
+  const { orderId } = useParams();
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const facilityCode = getFacilityCode();
+    if (facilityCode) {
+      getProductCatalog(facilityCode).then(items => {
+        setCatalogItems(items);
+      });
+    }
+  }, [fhirClient]);
+  
+  useEffect(() => {
+    const PatientID = patient?.id as string;
+    if (PatientID) {
+      getOrdersByPatient({ PatientID, EpicIDNumber: Environment.EPIC_ID_NUMBER })
+        .then(res => {
+          setOrders(res);
+        })
+        .catch(err => {
+          console.log("Error while getting orders: ", { PatientID }, err);
+        });
+    }
+  }, [patient]);
 
   useEffect(() => {
     setLoading(false);
@@ -16,6 +47,60 @@ export default function OrderViewPage() {
   
   const onBack = () => {
     navigate('/order/list');
+  };
+
+  const getFacilityCode = () => {
+    return 'GHS';
+    // return fhirClient?.getState("tokenResponse.facility");
+  };
+
+  const getDepartmentName = () => {
+    return fhirClient?.getState("tokenResponse.department") || "KHMRG";
+  };
+
+  const getFacilityName = () => {
+    return catalogItems.length ? catalogItems[0].facilityName : '';
+  };
+
+  const getPatientName = () => {
+    return patient?.name?.find((name) => name.use === "usual")?.text;
+  };
+
+  const getPatientRoom = () => {
+    const location = encounter?.location?.find(loc => loc.physicalType?.text === 'Room');
+    return location?.location.display || '4200';
+  };
+
+  const getBedNo = () => {
+    const location = encounter?.location?.find(loc => loc.physicalType?.text === 'Bed');
+    return location?.location.identifier?.value || '4200-01';
+  };
+
+  const getCurrentOrder = () => {
+    const order: any = orders.find((order: any) => order.orderID == orderId);
+    return order;
+  };
+
+  const getOrderCreatorFirstName = () => {
+    const order = getCurrentOrder();
+    if (order) {
+      return order.orderedBy.split(' ')[0];
+    }
+    return '';
+  }
+
+  const getOrderCreatorLastName = () => {
+    const order = getCurrentOrder();
+    if (order) {
+      return order.orderedBy.split(' ')[1];
+    }
+    return '';
+  }
+
+  const onCancelOrder = () => {
+    if (confirm("Are you sure you want to cancel this order?")) {
+      // TODO: Call API to cancel the order
+    }
   };
   
   return (
@@ -46,24 +131,13 @@ export default function OrderViewPage() {
               <div className="flex space-x-4">
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">
-                    Agiliti Site ID
-                  </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={"123456"}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
                     Facility Name
                   </label>
                   <input
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
-                    value={"St Joe Facility XYZ"}
+                    value={getFacilityName()}
                   />
                 </div>
                 <div className="flex-1">
@@ -74,7 +148,7 @@ export default function OrderViewPage() {
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
-                    value={"ED"}
+                    value={getDepartmentName()}
                   />
                 </div>
               </div>
@@ -88,7 +162,7 @@ export default function OrderViewPage() {
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
-                    value={"Randall Christ"}
+                    value={getPatientName()}
                   />
                 </div>
                 <div className="flex-1">
@@ -99,7 +173,7 @@ export default function OrderViewPage() {
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
-                    value={"F100"}
+                    value={getPatientRoom()}
                   />
                 </div>
                 <div className="flex-1">
@@ -110,7 +184,7 @@ export default function OrderViewPage() {
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
-                    value={"25"}
+                    value={getBedNo()}
                   />
                 </div>
               </div>
@@ -125,6 +199,7 @@ export default function OrderViewPage() {
                     type="text"
                     placeholder='Your First Name'
                     readOnly={true}
+                    value={getOrderCreatorFirstName()}
                   />
                 </div>
                 <div className="flex-1">
@@ -136,6 +211,7 @@ export default function OrderViewPage() {
                     type="text"
                     placeholder='Your Last Name'
                     readOnly={true}
+                    value={getOrderCreatorLastName()}
                   />
                 </div>
               </div>
@@ -155,10 +231,10 @@ export default function OrderViewPage() {
                   <label className="block text-sm font-medium mb-1">
                     Equipment Device Name
                   </label>
-                  <select className={`input-field`} disabled={isLoading}>
-                    <option>Equipment Picker</option>
-                    <option>Device 1</option>
-                    <option>Device 2</option>
+                  <select className={`input-field`} disabled={isLoading} value={getCurrentOrder()?.requestedItem}>
+                    {catalogItems.map(item => (
+                      <option key={item.orderCode}>{item.itemName}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -177,7 +253,12 @@ export default function OrderViewPage() {
             </div>
           </div>
           <button
-            type="submit"
+            className={`danger-button mt-4`}
+            onClick={onCancelOrder}
+          >
+            Cancel
+          </button>
+          <button
             className={`back-button mt-4`}
             onClick={onBack}
           >

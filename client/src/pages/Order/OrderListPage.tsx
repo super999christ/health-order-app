@@ -58,6 +58,12 @@ export default function OrderListPage() {
   //   },
   // ];
 
+  const onCancelOrder = () => {
+    if (confirm("Are you sure you want to cancel this order?")) {
+      // TODO: Call API to cancel the order
+    }
+  }
+
   return (
     <div className="flex flex-col lg:mt-[80px] mb-8 mx-auto w-fit p-6 bg-white border rounded-3xl max-w-[1050px]">
       <LogoutButton />
@@ -107,12 +113,6 @@ export default function OrderListPage() {
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
                   #
                 </th>
-                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                  Name
-                </th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                  Visit
-                </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Status
                 </th>
@@ -120,10 +120,13 @@ export default function OrderListPage() {
                   OrderID
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Ordered By
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Equipment
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                  Last Updated
+                  Created At
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Action
@@ -132,22 +135,25 @@ export default function OrderListPage() {
             </thead>
             <tbody className="divide-y divide-gray-200">
               {orders.map((order: any, index: number) => (
-                <tr key={order.orderId} className='text-gray-900 even:bg-gray-50'>
+                <tr key={order.orderID} className='text-gray-900 even:bg-gray-50'>
                   <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{index + 1}</td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{order.name}</td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.visit}</td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm">
                     <div className="rounded-md text-center bg-blue-500/10 py-1 text-sm font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20">
-                      {order.status}
+                      {order.orderStatus || 'N/A'}
                     </div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.OrderID}</td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.equipment}</td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.lastUpdated}</td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm">
-                    <Link to={`/order/view/${order.OrderID}`} className="text-indigo-600 hover:text-indigo-900">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.orderID}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm pl-0">{order.orderedBy}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.requestedItem}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm">{order.createdDate}</td>
+                  <td className="whitespace-nowrap px-3 py-4 text-sm flex gap-1">
+                    <Link to={`/order/view/${order.orderID}`} className="text-indigo-600 hover:text-indigo-900">
                       View
                     </Link>
+                    <span>/</span>
+                    <div onClick={() => onCancelOrder()} className="text-red-600 hover:text-red-500 cursor-pointer">
+                      Cancel
+                    </div>
                   </td>
                 </tr>
               ))}
