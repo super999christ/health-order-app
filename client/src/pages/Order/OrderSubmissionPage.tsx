@@ -53,6 +53,7 @@ export default function OrderSubmissionPage() {
         admissionDateTime: new Date().toString(),
         epicIDNumber: Environment.EPIC_ID_NUMBER,
       });
+      navigate(`/order/confirm/${39}`); // mock order ID
     } catch (err) {
       console.log("Order submission failed: ", err);
     } finally {
