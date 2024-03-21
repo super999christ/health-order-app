@@ -6,6 +6,7 @@ const Environment = {
     CATALOG_INFO: '/api/agility/emrorderingapi/api/GetCatalogInfo',
     SUBMIT_ORDER: '/api/agility/emrorderingapi/api/SubmitOrder',
     GET_ORDERS_BY_PATIENT: '/api/agility/emrorderingapi/api/GetOrdersByPatient',
+    GET_LATEST_ORDER_BY_PATIENT: '/api/common/GetLatestOrderByPatient',
     LOGIN: '/api/common/login',
     ROTATE_TOKEN: '/api/common/token-refresh',
     CREATE_RESERVATION: '/api/agility/reservationapi/scheduler/api/newreservations',

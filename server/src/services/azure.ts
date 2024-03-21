@@ -7,33 +7,72 @@ import Environment from '../constants/base';
 
 const connectionString = Environment.AZURE_EVENT_HUB_CONNECTION;
 const consumerGroupName = '$Default';
-const eventHubName = 'emrapporderconfirmation';
+
+enum EventHubName {
+  CONFIRMATION = 'emrapporderconfirmation',
+  STATUS = 'emrapporderstatus'
+}
+
+export interface IEventHubOrder {
+  OrderID: number;
+  PatientID: string;
+  EpicIDNumber: string;
+}
 
 export const globalStore = {
-  orders: []
+  orders: [] as IEventHubOrder[]
 };
 
 export const orderConsumerClient = new EventHubConsumerClient(
   consumerGroupName,
   connectionString,
-  eventHubName
+  EventHubName.CONFIRMATION
 );
 
 export const orderProducerClient = new EventHubProducerClient(
   connectionString,
-  eventHubName
+  EventHubName.CONFIRMATION
+);
+
+export const orderStatusConsumerClient = new EventHubConsumerClient(
+  consumerGroupName,
+  connectionString,
+  EventHubName.STATUS
+);
+
+export const orderStatusProducerClient = new EventHubProducerClient(
+  connectionString,
+  EventHubName.STATUS
 );
 
 export const orderSubscription = orderConsumerClient.subscribe(
   {
     processEvents: async events => {
       for (const event of events) {
-        console.log('Received event from EventHub: ', event.body);
+        // console.log('Received event from EventHub: ', event.body);
         globalStore.orders.push(event.body);
       }
     },
     processError: async err => {
       console.log('Error while processing EventHub order: ', err);
+    }
+  },
+  {
+    startPosition: {
+      enqueuedOn: new Date(1970, 1, 1)
+    }
+  }
+);
+
+export const orderStatusSubscription = orderStatusConsumerClient.subscribe(
+  {
+    processEvents: async events => {
+      for (const event of events) {
+        console.log('Received status event from EventHub: ', event.body);
+      }
+    },
+    processError: async err => {
+      console.log('Error while processing EventHub order status: ', err);
     }
   },
   {
@@ -54,10 +93,6 @@ export const pushOrderToEventHub = async order => {
   }
 };
 
-export const mockPushOrders = async () => {
-  // await pushOrderToEventHub({ name: 'Testing Order1', creator: 'Randall Christ' });
-  // await pushOrderToEventHub({ name: 'Testing Order2', creator: 'Cody' });
-  // await pushOrderToEventHub({ name: 'Testing Order3', creator: 'Randall' });
-  // await pushOrderToEventHub({ name: 'Testing Order4', creator: 'Christ' });
-  console.log('Subscription is running: ', orderSubscription.isRunning);
+export const startEventHubService = () => {
+  console.log('Started pulling from Azure EventHub...');
 };

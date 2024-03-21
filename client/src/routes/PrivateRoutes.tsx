@@ -9,6 +9,8 @@ export const PrivateRoute: React.FC<RouteProps> = () => {
   const { isFhirLoggedIn } = useFhirContext();
   const navigate = useNavigate();
 
+  console.log("@Router:", { isLoggedIn });
+
   if (!isFhirLoggedIn) {
     navigate('/');
   }

@@ -15,7 +15,11 @@ const Environment = {
   AZURE_EVENT_HUB_CONNECTION: process.env.AZURE_EVENT_HUB_CONNECTION,
   TOKEN_SECRET: process.env.TOKEN_SECRET,
   ORDER_APP_USERNAME: process.env.ORDER_APP_USERNAME,
-  ORDER_APP_PASSWORD: process.env.ORDER_APP_PASSWORD
+  ORDER_APP_PASSWORD: process.env.ORDER_APP_PASSWORD,
+  API: {
+    GET_ORDERS_BY_PATIENT: '/emrorderingapi/api/GetOrdersByPatient',
+    GET_ACTIVE_PATIENTS: '/emrorderingapi/api/GetActivePatients'
+  }
 };
 
 export default Environment;

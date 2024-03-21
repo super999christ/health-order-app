@@ -1,8 +1,8 @@
-import { Routes, Route } from 'react-router';
+import { Routes, Route } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoutes';
 import { PublicRoute } from './PublicRoutes';
 import LoginPage from '@root/pages/LoginPage';
-import HomePage from '@root/pages/HomePage';
+import HomePage from '@root/pages/HomePage';  
 import OrderSubmissionPage from '@root/pages/Order/OrderSubmissionPage';
 import OrderListPage from '@root/pages/Order/OrderListPage';
 import OrderViewPage from '@root/pages/Order/OrderViewPage';
@@ -19,7 +19,7 @@ export default function GlobalRouter() {
         <Route path='/order/submit' element={<OrderSubmissionPage />} />
         <Route path='/order/list' element={<OrderListPage />} />
         <Route path='/order/view/:orderId' element={<OrderViewPage />} />
-        <Route path='/order/confirm/:orderId' element={<OrderConfirmPage />} />
+        <Route path='/order/confirm' element={<OrderConfirmPage />} />
         <Route path='/reservation/calendar' element={<CalendarPage />} />
         <Route path='/reservation/detail' element={<ReservationDetailPage />} />
         <Route path='/reservation/submit' element={<ReservationSubmitPage />} />

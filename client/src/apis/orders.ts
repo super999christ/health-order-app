@@ -2,13 +2,8 @@ import { apiClient } from '../constants/api';
 import Environment from '../constants/base';
 
 export const submitOrder = async (order: unknown) => {
-  try {
-    const response = await apiClient.post(Environment.API.SUBMIT_ORDER, order);
-    return response.data;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
+  const response = await apiClient.post(Environment.API.SUBMIT_ORDER, order);
+  return response.data;
 };
 
 export const getOrdersByPatient = async (params: {
@@ -25,4 +20,15 @@ export const getOrdersByPatient = async (params: {
     console.error(err);
     return [];
   }
+};
+
+export const getLatestOrder = async (params: {
+  PatientID?: string;
+  EpicIDNumber?: string;  
+}) => {
+  const response = await apiClient.get(
+    Environment.API.GET_LATEST_ORDER_BY_PATIENT,
+    { params }
+  );
+  return response.data;
 };

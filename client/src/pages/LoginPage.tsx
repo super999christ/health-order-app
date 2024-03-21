@@ -4,7 +4,7 @@ import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
 import { useAuthContext } from '@root/hooks/useAuthContext';
 import { ChangeEvent, FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const [userName, setUserName] = useState('');
@@ -23,9 +23,7 @@ export default function LoginPage() {
       localStorage.setItem(Environment.STORAGE.ACCESS_TOKEN, accessToken);
       localStorage.setItem(Environment.STORAGE.REFRESH_TOKEN, refreshToken);
       setLoggedIn(true);
-      setTimeout(() => {
-        navigate('/order/submit');
-      }, 1000);
+      navigate('/order/submit');
     } catch (err) {
       console.error(err);
       setError(true);

@@ -33,12 +33,18 @@ commonRouter.post('/login', async (req, res) => {
   res.status(result.status).send(result.data);
 });
 
-commonRouter.get('/orders', async (req, res) => {
-  const patientID = req.query.patientID as string;
+commonRouter.get('/GetLatestOrderByPatient', async (req, res) => {
+  const { PatientID, EpicIDNumber } = req.query as any;
   const orders = globalStore.orders.filter(
-    order => order.PatientID === patientID
+    order =>
+      order.PatientID === PatientID && order.EpicIDNumber === EpicIDNumber
   );
-  res.status(200).send(orders);
+  if (orders.length > 0) {
+    const lastOrder = orders[orders.length - 1];
+    res.status(200).send(lastOrder);
+  } else {
+    res.status(500).send({ message: 'New order was not found from EventHub' });
+  }
 });
 
 commonRouter.post('/token-refresh', async (req, res) => {

@@ -8,7 +8,7 @@ import Spinner from '@root/components/Spinner';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
 import { FormEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 export default function ReservationSubmitPage() {
   const [isProcessing, setProcessing] = useState(false);

@@ -3,59 +3,82 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { submitOrder } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
+import ErrorText from '@root/components/ErrorText';
+import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
 import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
-import { FormEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { orderCreatorPhoneNumberValidatorOptions, requestedItemValidatorOptions } from '@root/validators/order-form-validation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+
+export interface IOrderRequest {
+  orderCreatorPhoneNumber: string;
+  requestedItem: string;
+  specialInstructions: string;
+  quantity: number;
+}
 
 export default function OrderSubmissionPage() {
   const [isProcessing, setProcessing] = useState(false);
   const navigate = useNavigate();
   const { patient, encounter, fhirClient } = useFhirContext();
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
-  const [specialInstruction, setSpecialInstruction] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [quantity] = useState(1);
+  const [isLoading, setLoading] = useState(true);
+  const { register, getValues, setValue, handleSubmit, setError, formState: { errors } } = useForm<IOrderRequest>({
+    defaultValues: {
+      quantity: 1
+    }
+  });
 
   useEffect(() => {
     const facilityCode = getFacilityCode();
     if (facilityCode) {
       getProductCatalog(facilityCode).then(items => {
         setCatalogItems(items);
+        if (items.length > 0) {
+          setValue('requestedItem', items[0].orderCode);
+        }
       });
     }
   }, [fhirClient]);
-  
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+
+  useEffect(() => {
+    if (patient && catalogItems.length > 0) {
+      setLoading(false);
+    }
+  }, [patient, catalogItems]);
+
+  const onSubmit = async () => {
     try {
       setProcessing(true);
+      const formValues = getValues();
       await submitOrder({
+        ...formValues,
         facilityCode: getFacilityCode(),
         department: getDepartmentName(),
         patientRoom: getPatientRoom(),
         bed: getBedNo(),
         orderCreatorFirstName: getOrderCreatorFirstName(),
         orderCreatorLastName: getOrderCreatorLastName(),
-        orderCreatorPhoneNumber: phoneNumber,
         orderCreator: getOrderCreatorFirstName() + ' ' + getOrderCreatorLastName(),
         orderType: 'NW',
         patientID: patient?.id,
         patientFirstName: patient?.name?.length ? patient.name[0].given[0] : '',
         patientLastName: patient?.name?.length ? patient.name[0].family[0] : '',
-        requestedItem: catalogItems[0]?.orderCode,
-        specialInstructions: specialInstruction,
         priority: "1",
-        quantity,
         admissionDateTime: new Date().toString(),
         epicIDNumber: Environment.EPIC_ID_NUMBER,
       });
-      navigate(`/order/confirm/${39}`); // mock order ID
+      navigate(`/order/confirm`); // mock order ID
     } catch (err) {
       console.log("Order submission failed: ", err);
+      setError('root.server', {
+        message: 'Something went wrong. Please try again some time later'
+      });
     } finally {
       setProcessing(false);
     }
@@ -88,8 +111,7 @@ export default function OrderSubmissionPage() {
   };
 
   const getFacilityCode = () => {
-    return 'GHS';
-    // return fhirClient?.getState("tokenResponse.facility");
+    return fhirClient?.getState("tokenResponse.facility") || 'GHS';
   };
 
   const getFacilityName = () => {
@@ -99,10 +121,11 @@ export default function OrderSubmissionPage() {
   const getDepartmentName = () => {
     return fhirClient?.getState("tokenResponse.department") || "KHMRG";
   };
-  
+
   return (
     <div className="flex flex-col lg:mt-[80px] lg:mb-8 mx-auto w-fit pl-10 lg:pl-6 pr-6 bg-white border rounded-3xl">
       <LogoutButton />
+      {isLoading && <LoadingBar />}
       <div
         className="relative px-4 sm:px-6 lg:px-8 pb-6 max-w-[650px]"
       >
@@ -121,7 +144,7 @@ export default function OrderSubmissionPage() {
             Creating a new healthcare order has never been easier. Simply select the type of order you need and fill out the quick form to submit your request.
           </div>
         </div>
-        <form onSubmit={onSubmit} action='#'>
+        <form onSubmit={handleSubmit(onSubmit)} action='#'>
           <div className='font-medium'>
             <div className="space-y-4 text-center mt-8">
               <div className="flex space-x-4">
@@ -216,11 +239,11 @@ export default function OrderSubmissionPage() {
                   <input
                     className={`input-field`}
                     type="text"
-                    placeholder="1234 1234 1234 1234"
+                    placeholder="123-456-7890"
                     disabled={isProcessing}
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    {...register('orderCreatorPhoneNumber', orderCreatorPhoneNumberValidatorOptions)}
                   />
+                  <ErrorText>{errors.orderCreatorPhoneNumber?.message}</ErrorText>
                 </div>
               </div>
               <div className='flex space-x-4'>
@@ -228,20 +251,29 @@ export default function OrderSubmissionPage() {
                   <label className="block text-sm font-medium mb-1">
                     Equipment Device Name
                   </label>
-                  <select className={`input-field`} disabled={isProcessing}>
+                  <select
+                    className={`input-field`}
+                    disabled={isProcessing}
+                    {...register('requestedItem', requestedItemValidatorOptions)}
+                  >
                     {catalogItems.map(item => (
-                      <option key={item.orderCode}>{item.itemName}</option>
+                      <option key={item.orderCode} value={item.orderCode}>{item.itemName}</option>
                     ))}
                   </select>
+                  <ErrorText>{errors.requestedItem?.message}</ErrorText>
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">
                     Quantity
                   </label>
-                  <select className={`input-field`} disabled={isProcessing}>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
+                  <select
+                    className={`input-field`}
+                    disabled={isProcessing}
+                    {...register('quantity')}
+                  >
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
                   </select>
                 </div>
                 <div className='flex-1'>
@@ -263,13 +295,13 @@ export default function OrderSubmissionPage() {
                     className={`textarea-field`}
                     placeholder="Your comment here"
                     disabled={isProcessing}
-                    value={specialInstruction}
-                    onChange={(e) => setSpecialInstruction(e.target.value)}
+                    {...register('specialInstructions')}
                   />
                 </div>
               </div>
             </div>
           </div>
+          <ErrorText>{errors.root?.server.message}</ErrorText>
           <button
             type="submit"
             className={`default-button mt-4`}

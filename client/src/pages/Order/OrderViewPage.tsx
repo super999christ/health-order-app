@@ -9,7 +9,7 @@ import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function OrderViewPage() {
   const [isLoading, setLoading] = useState(true);
@@ -37,13 +37,11 @@ export default function OrderViewPage() {
         })
         .catch(err => {
           console.log("Error while getting orders: ", { PatientID }, err);
+        }).finally(() => {
+          setLoading(false);
         });
     }
   }, [patient]);
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
   
   const onBack = () => {
     navigate('/order/list');
@@ -195,7 +193,7 @@ export default function OrderViewPage() {
                     First Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    className="input-field"
+                    className={`input-field !bg-gray-50`}
                     type="text"
                     placeholder='Your First Name'
                     readOnly={true}
@@ -207,7 +205,7 @@ export default function OrderViewPage() {
                     Last Name <span className="text-red-500">*</span>
                   </label>
                   <input
-                    className={`input-field`}
+                    className={`input-field !bg-gray-50`}
                     type="text"
                     placeholder='Your Last Name'
                     readOnly={true}
@@ -221,7 +219,7 @@ export default function OrderViewPage() {
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <input
-                    className={`input-field`}
+                    className={`input-field !bg-gray-50`}
                     type="text"
                     placeholder="1234 1234 1234 1234"
                     readOnly={true}
@@ -231,7 +229,7 @@ export default function OrderViewPage() {
                   <label className="block text-sm font-medium mb-1">
                     Equipment Device Name
                   </label>
-                  <select className={`input-field`} disabled={isLoading} value={getCurrentOrder()?.requestedItem}>
+                  <select className={`input-field !bg-gray-50`} disabled={isLoading} value={getCurrentOrder()?.requestedItem}>
                     {catalogItems.map(item => (
                       <option key={item.orderCode}>{item.itemName}</option>
                     ))}
@@ -244,7 +242,7 @@ export default function OrderViewPage() {
                     Comment
                   </label>
                   <textarea
-                    className={`textarea-field`}
+                    className={`textarea-field !bg-gray-50`}
                     placeholder="Your comment here"
                     readOnly={isLoading}
                   />
@@ -256,7 +254,7 @@ export default function OrderViewPage() {
             className={`danger-button mt-4`}
             onClick={onCancelOrder}
           >
-            Cancel
+            Cancel Order
           </button>
           <button
             className={`back-button mt-4`}
