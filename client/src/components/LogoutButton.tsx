@@ -8,7 +8,7 @@ export const LogoutButton = () => {
     window.location.href = '/';
   };
   return (
-    <button className="icon-button" onClick={onLogout}>
+    <button className="btn-icon" onClick={onLogout} title="Log out">
       <FontAwesomeIcon icon={faArrowRightFromBracket} fontSize={40} className="text-gray-600" />
     </button>
   )

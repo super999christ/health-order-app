@@ -23,3 +23,8 @@ export const getYearArray = () => {
   }
   return res;
 };
+
+export const formatDateTime = (date: Date | string) => {
+  const dateTime = new Date(date);
+  return `${dateTime.getFullYear()}-${dateTime.getMonth() + 1}-${dateTime.getDate()} ${dateTime.getHours()}:${dateTime.getMinutes()}`;
+};

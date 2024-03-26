@@ -1,0 +1,1 @@
+export type ColorMode = 'primary' | 'success' | 'warning' | 'danger';

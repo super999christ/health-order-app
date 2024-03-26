@@ -35,9 +35,17 @@ export interface IEncounter extends fhirclient.FHIR.Encounter {
   }[]
 }
 
+export interface IFhirClientMeta {
+  facilityCode: string;
+  firstName: string;
+  lastName: string;
+  department: string;
+};
+
 export interface IFhirClientContextProps {
   fhirClient: Nullable<Client>;
   isFhirLoggedIn: boolean;
   patient: Nullable<IPatient>;
   encounter: Nullable<IEncounter>;
+  meta: Nullable<IFhirClientMeta>;
 }

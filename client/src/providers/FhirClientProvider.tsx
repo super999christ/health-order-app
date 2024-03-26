@@ -1,6 +1,6 @@
 import Environment from '@root/constants/base';
 import HomePage from '@root/pages/HomePage';
-import { IEncounter, IFhirClientContextProps, IPatient } from '@root/types/fhir.type';
+import { IEncounter, IFhirClientContextProps, IFhirClientMeta, IPatient } from '@root/types/fhir.type';
 import { oauth2 as SMART } from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
 import { PropsWithChildren, createContext, useEffect, useState } from 'react';
@@ -23,6 +23,7 @@ export const FhirClientContext = createContext<IFhirClientContextProps>({
   isFhirLoggedIn: false,
   patient: null,
   encounter: null,
+  meta: null
 });
 
 const syncSessionStorage = () => {
@@ -49,6 +50,7 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
   const [fhirClient, setFhirClient] = useState<Nullable<Client>>(null);
   const [patient, setPatient] = useState<Nullable<IPatient>>(null);
   const [encounter, setEncounter] = useState<Nullable<IEncounter>>(null);
+  const [meta, setMeta] = useState<Nullable<IFhirClientMeta>>(null);
 
   useEffect(() => {
     syncSessionStorage();
@@ -80,12 +82,18 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
         }).catch(err => {
           console.log("Fhir encounter error: ", err);
           // oauth2();
-        })
+        });
+      setMeta({
+        facilityCode: fhirClient.getState("tokenResponse.facility") || 'GHS',
+        department: fhirClient.getState("tokenResponse.department") || "KHMRG",
+        firstName: fhirClient.getState("tokenResponse.userFname") || "Randall",
+        lastName: fhirClient.getState("tokenResponse.userLname") || "Christ",
+      });
     }
   }, [fhirClient]);
 
   return (
-    <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient, patient, encounter }}>
+    <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient, patient, encounter, meta }}>
       {fhirClient ? children : <HomePage />}
     </FhirClientContext.Provider>
   );

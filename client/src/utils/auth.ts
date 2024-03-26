@@ -30,3 +30,16 @@ export const refreshTokenRotate = async (refreshToken: string) => {
     console.log("Error while refreshing token: ", err);
   }
 };
+
+export const parseJwt = (token: string) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
+export const getUsername = (token: string) => {
+  const jwt = parseJwt(token);
+  return jwt ? jwt.username : "";
+};

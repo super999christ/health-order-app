@@ -74,7 +74,7 @@ export default function OrderConfirmPage() {
             </div>
           </div>
           <button
-            className={`success-button mt-4`}
+            className={`btn-success mt-4`}
             onClick={onViewOrder}
             disabled={isLoading || !!error}
           >
@@ -82,7 +82,7 @@ export default function OrderConfirmPage() {
             View
           </button>
           <button
-            className={`back-button mt-4`}
+            className={`btn-back mt-4`}
             type="submit"
             onClick={onBack}
           >

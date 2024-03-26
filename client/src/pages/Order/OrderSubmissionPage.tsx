@@ -1,4 +1,4 @@
-import { faAngleLeft } from '@fortawesome/pro-regular-svg-icons';
+import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { submitOrder } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
@@ -13,7 +13,7 @@ import { IProductCatatogItem } from '@root/types/product.type';
 import { orderCreatorPhoneNumberValidatorOptions, requestedItemValidatorOptions } from '@root/validators/order-form-validation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export interface IOrderRequest {
   orderCreatorPhoneNumber: string;
@@ -25,7 +25,7 @@ export interface IOrderRequest {
 export default function OrderSubmissionPage() {
   const [isProcessing, setProcessing] = useState(false);
   const navigate = useNavigate();
-  const { patient, encounter, fhirClient } = useFhirContext();
+  const { patient, encounter, fhirClient, meta } = useFhirContext();
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
   const [isLoading, setLoading] = useState(true);
   const { register, getValues, setValue, handleSubmit, setError, formState: { errors } } = useForm<IOrderRequest>({
@@ -35,7 +35,7 @@ export default function OrderSubmissionPage() {
   });
 
   useEffect(() => {
-    const facilityCode = getFacilityCode();
+    const facilityCode = meta?.facilityCode;
     if (facilityCode) {
       getProductCatalog(facilityCode).then(items => {
         setCatalogItems(items);
@@ -44,7 +44,7 @@ export default function OrderSubmissionPage() {
         }
       });
     }
-  }, [fhirClient]);
+  }, [fhirClient, meta]);
 
   useEffect(() => {
     if (patient && catalogItems.length > 0) {
@@ -58,13 +58,13 @@ export default function OrderSubmissionPage() {
       const formValues = getValues();
       await submitOrder({
         ...formValues,
-        facilityCode: getFacilityCode(),
-        department: getDepartmentName(),
+        facilityCode: meta?.facilityCode,
+        department: meta?.department,
         patientRoom: getPatientRoom(),
         bed: getBedNo(),
-        orderCreatorFirstName: getOrderCreatorFirstName(),
-        orderCreatorLastName: getOrderCreatorLastName(),
-        orderCreator: getOrderCreatorFirstName() + ' ' + getOrderCreatorLastName(),
+        orderCreatorFirstName: meta?.firstName,
+        orderCreatorLastName: meta?.lastName,
+        orderCreator: meta?.firstName + ' ' + meta?.lastName,
         orderType: 'NW',
         patientID: patient?.id,
         patientFirstName: patient?.name?.length ? patient.name[0].given[0] : '',
@@ -84,10 +84,6 @@ export default function OrderSubmissionPage() {
     }
   };
 
-  const onBack = () => {
-    navigate('/order/list');
-  };
-
   const getPatientName = () => {
     return patient?.name?.find((name) => name.use === "usual")?.text;
   };
@@ -97,29 +93,13 @@ export default function OrderSubmissionPage() {
     return location?.location.display || '4200';
   };
 
-  const getOrderCreatorFirstName = () => {
-    return fhirClient?.getState("tokenResponse.userFname") || "Randall";
-  }
-
-  const getOrderCreatorLastName = () => {
-    return fhirClient?.getState("tokenResponse.userLname") || "Christ";
-  }
-
   const getBedNo = () => {
     const location = encounter?.location?.find(loc => loc.physicalType?.text === 'Bed');
     return location?.location.identifier?.value || '4200-01';
   };
 
-  const getFacilityCode = () => {
-    return fhirClient?.getState("tokenResponse.facility") || 'GHS';
-  };
-
   const getFacilityName = () => {
     return catalogItems.length ? catalogItems[0].facilityName : '';
-  };
-
-  const getDepartmentName = () => {
-    return fhirClient?.getState("tokenResponse.department") || "KHMRG";
   };
 
   return (
@@ -127,29 +107,29 @@ export default function OrderSubmissionPage() {
       <LogoutButton />
       {isLoading && <LoadingBar />}
       <div
-        className="relative px-4 sm:px-6 lg:px-8 pb-6 max-w-[650px]"
+        className="relative px-4 sm:px-6 lg:px-8 pb-6 lg:w-[850px]"
       >
         <div className="text-center mb-6">
-          <div className="mb-2">
+          <div className="mb-4">
             <img
               className="mt-4 inline-flex rounded-full"
               src={LogoIcon}
               alt="User"
             />
           </div>
-          <h1 className="text-2xl leading-snug text-gray-800 font-semibold mb-2">
+          <h1 className="text-2xl leading-snug font-semibold bg-[#0a4069] text-white w-full p-2 text-left rounded-sm">
             Create Order
           </h1>
-          <div className="text-sm">
+          <div className="text-sm mt-2 text-left">
             Creating a new healthcare order has never been easier. Simply select the type of order you need and fill out the quick form to submit your request.
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} action='#'>
           <div className='font-medium'>
-            <div className="space-y-4 text-center mt-8">
-              <div className="flex space-x-4">
+            <div className="space-y-4 text-center">
+              <div className="flex space-x-4 gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
                     Facility Name
                   </label>
                   <input
@@ -160,80 +140,31 @@ export default function OrderSubmissionPage() {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
+                    User Full Name
+                  </label>
+                  <input
+                    className={`input-field !bg-gray-50`}
+                    type="text"
+                    readOnly={true}
+                    value={meta?.firstName + ' ' + meta?.lastName}
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-4 gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
                     Department
                   </label>
                   <input
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
-                    value={getDepartmentName()}
-                  />
-                </div>
-              </div>
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    Patient Name
-                  </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={getPatientName()}
+                    value={meta?.department}
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    Patient Room
-                  </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={getPatientRoom()}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    Bed No.
-                  </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={getBedNo()}
-                  />
-                </div>
-              </div>
-              <hr className='!my-8' />
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    User First Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    className="input-field"
-                    type="text"
-                    placeholder='Your First Name'
-                    disabled={isProcessing}
-                    value={getOrderCreatorFirstName()}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    Last Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    className={`input-field`}
-                    type="text"
-                    placeholder='Your Last Name'
-                    disabled={isProcessing}
-                    value={getOrderCreatorLastName()}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -246,10 +177,21 @@ export default function OrderSubmissionPage() {
                   <ErrorText>{errors.orderCreatorPhoneNumber?.message}</ErrorText>
                 </div>
               </div>
-              <div className='flex space-x-4'>
+              <div className="flex space-x-4 gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    Equipment Device Name
+                  <label className="block text-sm font-medium mb-1 text-left">
+                    Patient Name
+                  </label>
+                  <input
+                    className={`input-field !bg-gray-50`}
+                    type="text"
+                    readOnly={true}
+                    value={getPatientName()}
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
+                    Equipment Name
                   </label>
                   <select
                     className={`input-field`}
@@ -262,8 +204,21 @@ export default function OrderSubmissionPage() {
                   </select>
                   <ErrorText>{errors.requestedItem?.message}</ErrorText>
                 </div>
+              </div>
+              <div className="flex space-x-4 gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
+                    Patient Room
+                  </label>
+                  <input
+                    className={`input-field !bg-gray-50`}
+                    type="text"
+                    readOnly={true}
+                    value={getPatientRoom()}
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
                     Quantity
                   </label>
                   <select
@@ -276,8 +231,21 @@ export default function OrderSubmissionPage() {
                     <option value={3}>3</option>
                   </select>
                 </div>
+              </div>
+              <div className='flex space-x-4 gap-4'>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
+                    Bed No.
+                  </label>
+                  <input
+                    className={`input-field !bg-gray-50`}
+                    type="text"
+                    readOnly={true}
+                    value={getBedNo()}
+                  />
+                </div>
                 <div className='flex-1'>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
                     Option
                   </label>
                   <select className={`input-field`} disabled={isProcessing}>
@@ -288,7 +256,7 @@ export default function OrderSubmissionPage() {
               </div>
               <div className='flex space-x-4'>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-left">
                     Special Instructions
                   </label>
                   <textarea
@@ -302,23 +270,20 @@ export default function OrderSubmissionPage() {
             </div>
           </div>
           <ErrorText>{errors.root?.server.message}</ErrorText>
-          <button
-            type="submit"
-            className={`default-button mt-4`}
-            disabled={isProcessing}
-          >
-            {isProcessing && <Spinner />}
-            Submit
-          </button>
-          <button
-            type="button"
-            className={`back-button mt-2`}
-            disabled={isProcessing}
-            onClick={onBack}
-          >
-            <FontAwesomeIcon icon={faAngleLeft} size='lg' className='mr-1' />
-            View List
-          </button>
+          <div className='flex justify-between mt-4 '>
+            <Link to="/order/list" className='flex items-center gap-1 text-md'>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              View List
+            </Link>
+            <button
+              type="submit"
+              className="btn-warning w-40"
+              disabled={isProcessing}
+            >
+              {isProcessing && <Spinner />}
+              Submit
+            </button>
+          </div>
         </form>
       </div>
     </div>

@@ -40,7 +40,7 @@ export const OrderCard = () => {
         </div>
       </div>
       <div className='flex justify-end'>
-        <button className='open-button'>Open</button>
+        <button className='btn-primary w-full'>Open</button>
       </div>
     </div>
   );

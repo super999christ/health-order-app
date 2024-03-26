@@ -1,22 +1,25 @@
 import Environment from '@root/constants/base';
-import { isTokenValid, refreshTokenRotate } from '@root/utils/auth';
+import { isTokenValid, refreshTokenRotate, getUsername } from '@root/utils/auth';
 import {
   Dispatch,
   PropsWithChildren,
   SetStateAction,
   createContext,
   useEffect,
+  useMemo,
   useState
 } from 'react';
 
 export interface IAuthContextProps {
   isLoggedIn: boolean;
   setLoggedIn: Dispatch<SetStateAction<boolean>>;
+  username: string;
 }
 
 export const AuthContext = createContext<IAuthContextProps>({
   isLoggedIn: false,
-  setLoggedIn: () => {}
+  setLoggedIn: () => {},
+  username: ''
 });
 
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
@@ -26,6 +29,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   });
   const [accessToken, setAccessToken] = useState(localStorage.getItem(Environment.STORAGE.ACCESS_TOKEN) || '');
   const [refreshToken] = useState(localStorage.getItem(Environment.STORAGE.REFRESH_TOKEN) || '');
+  const username = useMemo(() => getUsername(accessToken), [accessToken]);
 
   useEffect(() => {
     if (isTokenValid(accessToken) && isTokenValid(refreshToken)) {
@@ -45,7 +49,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setLoggedIn }}>
+    <AuthContext.Provider value={{ isLoggedIn, setLoggedIn, username }}>
       {children}
     </AuthContext.Provider>
   );

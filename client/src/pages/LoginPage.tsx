@@ -23,7 +23,7 @@ export default function LoginPage() {
       localStorage.setItem(Environment.STORAGE.ACCESS_TOKEN, accessToken);
       localStorage.setItem(Environment.STORAGE.REFRESH_TOKEN, refreshToken);
       setLoggedIn(true);
-      navigate('/order/submit');
+      navigate('/splash');
     } catch (err) {
       console.error(err);
       setError(true);
@@ -49,7 +49,7 @@ export default function LoginPage() {
           alt="Agility Company"
         />
       </div>
-      <div className='flex flex-col lg:flex-row justify-center min-h-full flex-1 lg:gap-10 items-center items-baseline'>
+      <div className='flex flex-col lg:flex-row justify-center min-h-full flex-1 lg:gap-10 items-baseline'>
         <div className="flex flex-col justify-center lg:px-8">
           <div className="sm:w-full sm:max-w-sm">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -96,7 +96,7 @@ export default function LoginPage() {
               </div>
               <button
                 type="submit"
-                className="default-button"
+                className="btn-success w-full"
                 disabled={isProcessing}
               >
                 {isProcessing && <Spinner />}
