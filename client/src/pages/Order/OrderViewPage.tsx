@@ -1,6 +1,6 @@
 import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getOrdersByPatient } from '@root/apis/orders';
+import { cancelOrder, getOrdersByPatient } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
@@ -10,7 +10,7 @@ import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IOrder } from '@root/types/order.type';
 import { IProductCatatogItem } from '@root/types/product.type';
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Nullable } from 'vitest';
 
 export default function OrderViewPage() {
@@ -20,6 +20,7 @@ export default function OrderViewPage() {
   const { orderId } = useParams();
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<Nullable<IOrder>>();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const facilityCode = meta?.facilityCode;
@@ -74,9 +75,10 @@ export default function OrderViewPage() {
     return currentOrder?.orderedBy.split(' ')[1];
   }
 
-  const onCancelOrder = () => {
+  const onCancelOrder = async () => {
     if (confirm("Are you sure you want to cancel this order?")) {
-      // TODO: Call API to cancel the order
+      await cancelOrder([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: orderId! }]);
+      navigate('/order/list');
     }
   };
 

@@ -32,3 +32,8 @@ export const getLatestOrder = async (params: {
   );
   return response.data;
 };
+
+export const cancelOrder = async (orders: { epicIDNumber: string; orderID: string; }[]) => {
+  const response = await apiClient.post(Environment.API.CANCEL_ORDER, orders);
+  return response.data;
+}
