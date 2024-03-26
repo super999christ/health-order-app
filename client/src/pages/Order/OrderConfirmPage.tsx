@@ -67,14 +67,14 @@ export default function OrderConfirmPage() {
             {error}
           </div>
         </div>
-        <form onSubmit={onBack} action='#'>
+        <form onSubmit={onBack} action='#' className='text-center'>
           <div className='font-medium'>
             <div className="space-y-4 text-center mt-8">
               
             </div>
           </div>
           <button
-            className={`btn-success mt-4`}
+            className={`btn-success mt-4 w-full`}
             onClick={onViewOrder}
             disabled={isLoading || !!error}
           >

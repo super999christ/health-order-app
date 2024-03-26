@@ -72,6 +72,12 @@ export default function OrderSubmissionPage() {
         priority: "1",
         admissionDateTime: new Date().toString(),
         epicIDNumber: Environment.EPIC_ID_NUMBER,
+        requestedItem: [
+          {
+            item: formValues.requestedItem,
+            quantity: formValues.quantity
+          }
+        ]
       });
       navigate(`/order/confirm`); // mock order ID
     } catch (err) {
