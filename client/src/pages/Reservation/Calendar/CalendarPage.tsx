@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons'
 import { LoadingOverlay } from '@root/components/LoadingOverlay'
 import LogoIcon from '@root/assets/images/logo.png';
+import { faPlus } from '@fortawesome/pro-regular-svg-icons'
 
 enum VIEW_UNIT {
   WEEK,
@@ -239,11 +240,11 @@ export default function CalendarPage() {
       </div>
       {isLoading && <LoadingOverlay />}
       <div className="lg:flex lg:h-full lg:flex-col">
-        <header className="block sm:flex items-center justify-between border-b border-gray-200 px-6 py-4 lg:flex-none">
-          <h1 className="text-base whitespace-nowrap font-semibold leading-6 text-gray-900">
+        <header className="block sm:flex items-center justify-between border-b border-gray-200 px-0 sm:px-6 py-4 lg:flex-none">
+          <h1 className="text-base max-sm:text-center max-sm:mb-2 max-sm:text-lg whitespace-nowrap font-semibold leading-6 text-gray-900">
             <time dateTime="2022-01">{getCurrentDate()}</time>
           </h1>
-          <div className="flex items-center flex-wrap gap-2 lg:gap-0 justify-end lg:justify-start">
+          <div className="flex items-center flex-wrap gap-2 lg:gap-0 justify-center sm:justify-end lg:justify-start">
             <div className="relative flex items-center rounded-md bg-white shadow-sm">
               <button
                 type="button"
@@ -307,7 +308,7 @@ export default function CalendarPage() {
                 </Transition>
               </Menu>
             </div>
-            <div className="md:ml-4 flex items-center gap-2 flex-wrap lg:gap-0 justify-end lg:justify-start">
+            <div className="md:ml-4 flex items-center gap-2 flex-wrap lg:gap-0 justify-center sm:justify-end lg:justify-start">
               <Menu as="div" className="relative">
                 <Menu.Button
                   type="button"
@@ -383,12 +384,13 @@ export default function CalendarPage() {
                   </Menu.Items>
                 </Transition>
               </Menu>
-              <div
-                className="ml-2 cursor-pointer flex rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 whitespace-nowrap"
+              <button
+                className="ml-2 flex gap-1 rounded-md bg-green-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 whitespace-nowrap"
                 onClick={() => navigate('/reservation/submit')}
               >
+                <FontAwesomeIcon icon={faPlus} size='lg' />
                 New Reservation
-              </div>
+              </button>
             </div>
           </div>
         </header>

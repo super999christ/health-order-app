@@ -1,10 +1,10 @@
-import { faAngleLeft } from '@fortawesome/pro-regular-svg-icons';
+import { faAngleLeft, faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function ReservationDetailPage() {
   const [isLoading, setLoading] = useState(true);
@@ -28,13 +28,13 @@ export default function ReservationDetailPage() {
   }, []);
   
   return (
-    <div className="flex flex-col lg:mt-[80px] lg:mb-8 mx-auto w-fit pl-10 lg:pl-6 pr-6 bg-white border rounded-3xl">
+    <div className="flex flex-col lg:mt-[80px] md:mt-[50px] lg:mb-8 mx-auto w-fit pl-10 lg:pl-6 pr-6 bg-white border rounded-3xl">
       <LogoutButton />
       {isLoading && <LoadingBar />}
       <div
-        className="relative px-4 sm:px-6 lg:px-8 pb-6 max-w-[650px]"
+        className="relative px-4 sm:px-6 lg:px-8 pb-6 md:w-[750px] lg:w-[850px]"
       >
-        <div className="text-center mb-6">
+        <div className="text-center mb-4">
           <div className="mb-2">
             <img
               className="mt-4 inline-flex rounded-full"
@@ -42,146 +42,103 @@ export default function ReservationDetailPage() {
               alt="User"
             />
           </div>
-          <h1 className="text-2xl leading-snug text-gray-800 font-semibold mb-2">
+          <h1 className="text-2xl leading-snug font-semibold bg-[#1a75a3] text-white w-full p-2 text-left rounded-sm">
             View Reservation
           </h1>
-          <div className="text-sm">
-            Easily view reservation details including patient name, appointment date and time, doctor assigned, room number, and status like checked in or completed, all on a single reservation record.
-          </div>
         </div>
         <form onSubmit={onBack} action='#'>
-          <div className='font-medium'>
-            <div className="space-y-6 text-center mt-8">
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+          <div className='font-medium p-4 rounded-xl border-2 border-solid bg-blue-50'>
+            <div className="space-y-6 text-left">
+              <div className="flex space-x-4 gap-4">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Patient
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.PATIENT}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.PATIENT}
+                  </label>
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Procedure
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.PROCEDURE}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.PROCEDURE}
+                  </label>
                 </div>
               </div>
-              <div className='flex space-x-4'>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+              <div className="flex space-x-4 gap-4">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Reservation Start
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.REQSTART}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.REQSTART}
+                  </label>
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Reservation End
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.REQEND}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.REQEND}
+                  </label>
                 </div>
               </div>
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+              <div className="flex space-x-4 gap-4">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Doctor
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.DOCTOR}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.DOCTOR}
+                  </label>
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Facility
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.FACILITY}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.FACILITY}
+                  </label>
                 </div>
               </div>
-              <div className="flex space-x-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+              <div className="flex space-x-4 gap-4">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Status
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.STATUS}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.STATUS}
+                  </label>
                 </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
                     Reservation
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.CASEQCID}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
-                    Tech Only
+                  <label className='block text-sm font-normal'>
+                    {reservation?.CASEQCID}
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.TECHONLY === 'True' ? 'Yes' : 'No'}
-                  />
                 </div>
               </div>
               <div className="flex space-x-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-md font-semibold mb-1">
                     Comments
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                    value={reservation?.COMMENTS}
-                  />
+                  <label className='block text-sm font-normal'>
+                    {reservation?.COMMENTS}
+                  </label>
                 </div>
               </div>
             </div>
           </div>
-          <button
-            type="submit"
-            className={`back-button mt-4`}
-            onClick={onBack}
-          >
-            <FontAwesomeIcon icon={faAngleLeft} size='lg' className='mr-1' />
-            Back
-          </button>
+          <div className='flex justify-start mt-4 px-2'>
+            <Link to="/reservation/calendar" className='flex items-center gap-1 text-md'>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              View Calendar
+            </Link>
+          </div>
         </form>
       </div>
     </div>

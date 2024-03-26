@@ -1,0 +1,1 @@
+import { RegisterOptions } from "react-hook-form";

@@ -14,7 +14,7 @@ export default function CalendarListView({ events, onViewEvent }: ICalendarListV
         {events.map((event: any) => (
           <li className="py-4 sm:flex sm:flex-wrap hover:bg-gray-100 cursor-pointer" onClick={() => onViewEvent(event)} key={event.id}>
             <Bullet status={event.type} className="mr-2" />
-            <time dateTime={dayjs(event.startDate).format("YYYY-MM-DD")} className="flex-1">
+            <time dateTime={dayjs(event.startDate).format("YYYY-MM-DD")} className="w-28 flex-none">
               {event.startDate.toLocaleDateString('en-US', {
                 weekday: 'short', 
                 month: 'short',
@@ -22,13 +22,13 @@ export default function CalendarListView({ events, onViewEvent }: ICalendarListV
               })}
             </time>
             {new Date() > event.startDate && (
-              <p className="mt-2 flex-1 sm:mt-0">{event.name}</p>
+              <p className="flex-1 sm:mt-0">{event.name}</p>
             )}
             {new Date() <= event.startDate && (
-              <p className="mt-2 flex-1 font-semibold text-gray-900 sm:mt-0">{event.name}</p>
+              <p className="flex-1 font-semibold text-gray-900 sm:mt-0">{event.name}</p>
             )}
-            <p>{event.patient}</p>
-            <p className="mt-1 ml-4 flex-auto">
+            <p className="flex-1">{event.patient}</p>
+            <p className="ml-4 flex-auto">
               Tech Only: {event.techonly ? "Yes" : "No"}
               {event.comments && (
                 <>
