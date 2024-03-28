@@ -1,0 +1,35 @@
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16.14.0'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    NODE_ENV=production npm run build
+    cd server && npm install && cd ..
+    rm -rf ./dist && mkdir ./dist
+    cp -a ./build ./dist/public
+    cp -a  ./server/apis ./server/logger/ ./server/middlewares ./server/utils ./server/ssl ./server/node_modules ./server/server.js ./server/package.json ./server/.env ./dist 
+  displayName: 'npm install and build'
+
+- task: ArchiveFiles@2
+  displayName: 'Archive files'
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/dist'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/artifact.zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'build'
+    publishLocation: 'Container'
