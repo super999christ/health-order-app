@@ -1,6 +1,7 @@
 import { faArrowRight, faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
+import { faCancel, faShieldCheck } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getOrdersByPatient } from '@root/apis/orders';
+import { cancelOrder, getOrdersByPatient } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
@@ -68,6 +69,13 @@ export default function OrderListPage() {
     return 'primary';
   }
 
+  const onCancelOrder = async (orderId: number) => {
+    if (confirm("Are you sure you want to cancel this order?")) {
+      await cancelOrder([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: String(orderId) }]);
+      navigate('/order/list');
+    }
+  };
+
   return (
     <div className="flex flex-col lg:mt-[80px] mb-8 mx-auto w-fit p-6 bg-white border rounded-3xl lg:w-[1050px]">
       <LogoutButton />
@@ -111,43 +119,50 @@ export default function OrderListPage() {
           <table className="min-w-full divide-y divide-gray-300">
             <thead>
               <tr>
-                <th scope="col" className="px-3 py-3.5 pl-0 text-center text-sm font-semibold text-gray-900">
-                  Order ID
+                <th scope="col" className="px-3 py-3.5 pl-0 text-left text-sm font-semibold text-gray-900">
+                  Order Date
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Name
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                  Visit
+                  Status
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                  Status
+                  Order ID
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                   Equipment
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                  Last Updated
+                  Action
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {orders.map((order: IOrder) => (
                 <tr key={order.orderID} className='text-gray-900 even:bg-gray-50'>
-                  <td className="whitespace-nowrap text-center px-3 py-4 pl-0 text-sm">
-                    <Link to={`/order/view/${order.orderID}`} className="text-indigo-600 hover:text-indigo-900 hover:underline">
-                      {order.orderID}
-                    </Link>
-                  </td>
+                  <td className="whitespace-nowrap text-left px-3 py-4 pl-0 text-sm">{formatDateTime(order.createdDate)}</td>
                   <td className="whitespace-nowrap text-left px-3 py-4 text-sm">{order.orderedBy}</td>
-                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm">{"CSN3245"}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
                     <StatusBadge color={getColorFromOrderStatus(order.orderStatus)}>
                       {order.orderStatus || 'OPEN'}
                     </StatusBadge>
                   </td>
+                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
+                    <Link to={`/order/view/${order.orderID}`} className="text-indigo-600 hover:text-indigo-900 hover:underline">
+                      {order.orderID}
+                    </Link>
+                  </td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">{getEquipmentName(order.requestedItem)}</td>
-                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm">{formatDateTime(order.createdDate)}</td>
+                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm flex justify-center gap-1">
+                    <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
+                      <FontAwesomeIcon icon={faCancel} />
+                    </button>
+                    <button className='btn-success' title="Pick Up">
+                      <FontAwesomeIcon icon={faShieldCheck} />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

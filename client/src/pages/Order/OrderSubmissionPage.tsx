@@ -171,7 +171,7 @@ export default function OrderSubmissionPage() {
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-left">
-                    Phone Number <span className="text-red-500">*</span>
+                    Phone Number
                   </label>
                   <input
                     className={`input-field`}
@@ -197,13 +197,14 @@ export default function OrderSubmissionPage() {
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-left">
-                    Equipment Name
+                    Equipment Name <span className="text-red-500">*</span>
                   </label>
                   <select
                     className={`input-field`}
                     disabled={isProcessing}
                     {...register('requestedItem', requestedItemValidatorOptions)}
                   >
+                    <option value="">Please choose an equipment</option>
                     {catalogItems.map(item => (
                       <option key={item.orderCode} value={item.orderCode}>{item.itemName}</option>
                     ))}

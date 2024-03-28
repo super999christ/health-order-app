@@ -84,7 +84,7 @@ export default function OrderViewPage() {
 
   const getEquipmentName = () => {
     const equipment = catalogItems.find(item => item.orderCode === currentOrder?.requestedItem);
-    return equipment?.orderCode;
+    return equipment?.itemName;
   };
   
   return (
@@ -112,28 +112,10 @@ export default function OrderViewPage() {
               <div className="flex space-x-4 gap-4">
                 <div className='flex-1'>
                   <label className="block text-md font-semibold mb-1">
-                    Agiliti Site ID
-                  </label>
-                  <label className='block text-sm font-normal'>
-                    {getFacilityName()}
-                  </label>
-                </div>
-                <div className='flex-1'>
-                  <label className="block text-md font-semibold mb-1">
                     User Full name
                   </label>
                   <label className='block text-sm font-normal'>
                     {getOrderCreatorFirstName() + ' ' + getOrderCreatorLastName()}
-                  </label>
-                </div>
-              </div>
-              <div className="flex space-x-4 gap-4">
-                <div className='flex-1'>
-                  <label className="block text-md font-semibold mb-1">
-                    Facility Name
-                  </label>
-                  <label className='block text-sm font-normal'>
-                    {getFacilityName()}
                   </label>
                 </div>
                 <div className='flex-1'>
@@ -148,10 +130,10 @@ export default function OrderViewPage() {
               <div className="flex space-x-4 gap-4">
                 <div className='flex-1'>
                   <label className="block text-md font-semibold mb-1">
-                    Department
+                    Facility Name
                   </label>
                   <label className='block text-sm font-normal'>
-                    {meta?.department}
+                    {getFacilityName()}
                   </label>
                 </div>
                 <div className='flex-1'>
@@ -166,10 +148,10 @@ export default function OrderViewPage() {
               <div className="flex space-x-4 gap-4">
                 <div className='flex-1'>
                   <label className="block text-md font-semibold mb-1">
-                    Patient Name
+                    Department
                   </label>
                   <label className='block text-sm font-normal'>
-                    {getPatientName()}
+                    {meta?.department}
                   </label>
                 </div>
                 <div className='flex-1'>
@@ -184,22 +166,12 @@ export default function OrderViewPage() {
               <div className="flex space-x-4 gap-4">
                 <div className='flex-1'>
                   <label className="block text-md font-semibold mb-1">
-                    Patient Room
+                    Patient Name
                   </label>
                   <label className='block text-sm font-normal'>
-                    {getPatientRoom()}
+                    {getPatientName()}
                   </label>
                 </div>
-                <div className='flex-1'>
-                  <label className="block text-md font-semibold mb-1">
-                    Option
-                  </label>
-                  <label className='block text-sm font-normal'>
-                    {"STAT"}
-                  </label>
-                </div>
-              </div>
-              <div className="flex space-x-4 gap-4">
                 <div className='flex-1'>
                   <label className="block text-md font-semibold mb-1">
                     Bed No.
@@ -208,6 +180,26 @@ export default function OrderViewPage() {
                     {getBedNo()}
                   </label>
                 </div>
+              </div>
+              <div className="flex space-x-4 gap-4">
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
+                    Patient Room
+                  </label>
+                  <label className='block text-sm font-normal'>
+                    {getPatientRoom()}
+                  </label>
+                </div>
+                <div className='flex-1'>
+                  <label className="block text-md font-semibold mb-1">
+                    Priority
+                  </label>
+                  <label className='block text-sm font-normal'>
+                    {"STAT"}
+                  </label>
+                </div>
+              </div>
+              <div className="flex space-x-4 gap-4">
                 <div className='flex-1'>
                   <label className="block text-md font-semibold mb-1">
                     Special Instructions
