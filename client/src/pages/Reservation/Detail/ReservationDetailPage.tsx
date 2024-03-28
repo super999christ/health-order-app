@@ -1,4 +1,4 @@
-import { faAngleLeft, faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
+import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';

@@ -1,5 +1,5 @@
 const Environment = {
-  SERVER_BASE_URL: import.meta.env.VITE_SERVER_BASE_URL,
+  SERVER_BASE_URL: process.env.NODE_ENV === 'production' ? window.location.origin : import.meta.env.VITE_SERVER_BASE_URL,
   FHIR_CLIENT_ID: import.meta.env.VITE_FHIR_CLIENT_ID,
   EPIC_ID_NUMBER: import.meta.env.VITE_EPIC_ID_NUMBER,
   API: {
