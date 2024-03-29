@@ -3,7 +3,7 @@
   "main": "server.js",
   "scripts": {
     "start": "NODE_ENV=production node server.js",
-    "serve": "node dist/server.js",
+    "serve": "node --es-module-specifier-resolution=node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "build": "tsc"
   },
