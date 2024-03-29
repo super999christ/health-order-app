@@ -17,7 +17,7 @@ export const PrivateRoute: React.FC<RouteProps> = () => {
     if (!isLoggedIn) {
       navigate('/login');
     }
-  }, [isLoggedIn, isFhirLoggedIn, navigate]);
+  }, [isLoggedIn, isFhirLoggedIn]);
 
   return <Outlet />;
 };

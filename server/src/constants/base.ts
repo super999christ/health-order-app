@@ -18,7 +18,8 @@ const Environment = {
   ORDER_APP_PASSWORD: process.env.ORDER_APP_PASSWORD,
   API: {
     GET_ORDERS_BY_PATIENT: '/emrorderingapi/api/GetOrdersByPatient',
-    GET_ACTIVE_PATIENTS: '/emrorderingapi/api/GetActivePatients'
+    GET_ACTIVE_PATIENTS: '/emrorderingapi/api/GetActivePatients',
+    DISCHARGE_PATIENT: '/emrorderingapi/api/dischargepatient',
   }
 };
 

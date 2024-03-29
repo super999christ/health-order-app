@@ -22,6 +22,8 @@ export default function OrderListPage() {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [filteredOrders, setFilteredOrders] = useState<IOrder[]>([]);
 
   useEffect(() => {
     const PatientID = patient?.id as string;
@@ -38,6 +40,10 @@ export default function OrderListPage() {
         });
     }
   }, [patient]);
+
+  useEffect(() => {
+    setFilteredOrders(orders.filter(order => order.orderedBy.toLowerCase().includes(searchKeyword.toLowerCase())));
+  }, [orders, searchKeyword]);
 
   useEffect(() => {
     const facilityCode = meta?.facilityCode;
@@ -71,8 +77,20 @@ export default function OrderListPage() {
 
   const onCancelOrder = async (orderId: number) => {
     if (confirm("Are you sure you want to cancel this order?")) {
-      await cancelOrder([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: String(orderId) }]);
-      navigate('/order/list');
+      try {
+        setLoading(true);
+        await cancelOrder([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: String(orderId) }]);
+        setLoading(false);
+        navigate('/order/list');
+        setTimeout(() => {
+          alert("Order was cancelled successfully");
+        }, 200);
+      } catch (err) {
+        setLoading(false);
+        setTimeout(() => {
+          alert("Something went wrong. Please try again later.");
+        }, 200);
+      }
     }
   };
 
@@ -102,10 +120,12 @@ export default function OrderListPage() {
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <FontAwesomeIcon icon={faSearch} size='sm' />
               </div>
-              <input type="search" className="block w-full p-3 h-10 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search orders" required />
-              <div className="absolute inset-y-0 end-2.5 flex items-center ps-3 pointer-events-none">
-                  <FontAwesomeIcon icon={faArrowRight} size='sm' />
-              </div>
+              <input type="search" className="block w-full p-3 h-10 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search orders" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} required />
+              {!searchKeyword && (
+                <div className="absolute inset-y-0 end-2.5 flex items-center ps-3 pointer-events-none">
+                    <FontAwesomeIcon icon={faArrowRight} size='sm' />
+                </div>
+              )}
             </div>
           </div>
           <div className='flex items-center'>
@@ -140,7 +160,7 @@ export default function OrderListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {orders.map((order: IOrder) => (
+              {filteredOrders.map((order: IOrder) => (
                 <tr key={order.orderID} className='text-gray-900 even:bg-gray-50'>
                   <td className="whitespace-nowrap text-left px-3 py-4 pl-0 text-sm">{formatDateTime(order.createdDate)}</td>
                   <td className="whitespace-nowrap text-left px-3 py-4 text-sm">{order.orderedBy}</td>

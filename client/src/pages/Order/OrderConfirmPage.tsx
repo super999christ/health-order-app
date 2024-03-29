@@ -49,7 +49,7 @@ export default function OrderConfirmPage() {
       <LogoutButton />
       {isLoading && <LoadingBar />}
       <div
-        className="relative px-4 sm:px-6 lg:px-8 pb-6 max-w-[650px]"
+        className="relative px-4 sm:px-6 lg:px-8 pb-6 w-[370px]"
       >
         <div className="text-center mb-6">
           <div className="mb-2">

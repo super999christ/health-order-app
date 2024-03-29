@@ -13,7 +13,7 @@ const apps = [
   {
     id: 'reservation_app',
     name: 'Reservation App',
-    href: '/reservation/calendar',
+    href: '/login',
   }
 ];
 

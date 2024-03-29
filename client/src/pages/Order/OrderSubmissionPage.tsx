@@ -1,8 +1,9 @@
-import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
+import { faArrowLeft, faMinus } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { submitOrder } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
+import { Alert } from '@root/components/Alert';
 import ErrorText from '@root/components/ErrorText';
 import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
@@ -12,15 +13,19 @@ import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
 import { orderCreatorPhoneNumberValidatorOptions, requestedItemValidatorOptions } from '@root/validators/order-form-validation';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 
 export interface IOrderRequest {
   orderCreatorPhoneNumber: string;
-  requestedItem: string;
+  requestedItem: IEquipment[];
   specialInstructions: string;
+};
+
+export interface IEquipment {
+  item: string;
   quantity: number;
-}
+};
 
 export default function OrderSubmissionPage() {
   const [isProcessing, setProcessing] = useState(false);
@@ -28,9 +33,24 @@ export default function OrderSubmissionPage() {
   const { patient, encounter, fhirClient, meta } = useFhirContext();
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
   const [isLoading, setLoading] = useState(true);
-  const { register, getValues, setValue, handleSubmit, setError, formState: { errors } } = useForm<IOrderRequest>({
-    defaultValues: {
-      quantity: 1
+  const { register, getValues, handleSubmit, setError, formState: { errors }, control } = useForm<IOrderRequest>({});
+  const { fields, append, remove, update } = useFieldArray({
+    control,
+    name: 'requestedItem',
+    rules: {
+      validate: (values: IEquipment[]) => {
+        console.log({ values });
+        for (let i = 0; i < values.length; i++) {
+          if (!values[i].item) {
+            setError(`requestedItem.${i}`, {
+              message: 'Equipment name is required'
+            });
+          } else {
+            setError(`requestedItem.${i}`, {});
+          }
+        }
+        return true;
+      }
     }
   });
 
@@ -39,9 +59,6 @@ export default function OrderSubmissionPage() {
     if (facilityCode) {
       getProductCatalog(facilityCode).then(items => {
         setCatalogItems(items);
-        if (items.length > 0) {
-          setValue('requestedItem', items[0].orderCode);
-        }
       });
     }
   }, [fhirClient, meta]);
@@ -51,6 +68,17 @@ export default function OrderSubmissionPage() {
       setLoading(false);
     }
   }, [patient, catalogItems]);
+
+  const onAddEquipment = () => {
+    append({
+      item: '',
+      quantity: 1
+    });
+  };
+
+  const onRemoveEquipment = (itemId: string) => {
+    remove(fields.findIndex(field => field.id === itemId));
+  };
 
   const onSubmit = async () => {
     try {
@@ -72,12 +100,7 @@ export default function OrderSubmissionPage() {
         priority: "1",
         admissionDateTime: new Date().toString(),
         epicIDNumber: Environment.EPIC_ID_NUMBER,
-        requestedItem: [
-          {
-            item: formValues.requestedItem,
-            quantity: formValues.quantity
-          }
-        ]
+        requestedItem: formValues.requestedItem,
       });
       navigate(`/order/confirm`); // mock order ID
     } catch (err) {
@@ -197,24 +220,6 @@ export default function OrderSubmissionPage() {
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-left">
-                    Equipment Name <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    className={`input-field`}
-                    disabled={isProcessing}
-                    {...register('requestedItem', requestedItemValidatorOptions)}
-                  >
-                    <option value="">Please choose an equipment</option>
-                    {catalogItems.map(item => (
-                      <option key={item.orderCode} value={item.orderCode}>{item.itemName}</option>
-                    ))}
-                  </select>
-                  <ErrorText>{errors.requestedItem?.message}</ErrorText>
-                </div>
-              </div>
-              <div className="flex space-x-4 gap-4">
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1 text-left">
                     Patient Room
                   </label>
                   <input
@@ -223,20 +228,6 @@ export default function OrderSubmissionPage() {
                     readOnly={true}
                     value={getPatientRoom()}
                   />
-                </div>
-                <div className="flex-1">
-                  <label className="block text-sm font-medium mb-1 text-left">
-                    Quantity
-                  </label>
-                  <select
-                    className={`input-field`}
-                    disabled={isProcessing}
-                    {...register('quantity')}
-                  >
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                  </select>
                 </div>
               </div>
               <div className='flex space-x-4 gap-4'>
@@ -261,6 +252,52 @@ export default function OrderSubmissionPage() {
                   </select>
                 </div>
               </div>
+              {!fields.length && (
+                <Alert color='warning' className='my-2'>
+                  Please add equipments to the order
+                </Alert>
+              )}
+              {fields.map((field, index) => (
+                <div className="flex space-x-4 gap-4" key={field.id}>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1 text-left">
+                      Equipment{index + 1} Name <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      className={`input-field`}
+                      disabled={isProcessing}
+                      value={field.item}
+                      onChange={(e) => update(index, { item: e.target.value, quantity: field.quantity })}
+                    >
+                      <option value="">Please choose an equipment</option>
+                      {catalogItems.map(item => (
+                        <option key={item.orderCode} value={item.orderCode}>{item.itemName}</option>
+                      ))}
+                    </select>
+                    {errors.requestedItem && <ErrorText>{errors.requestedItem[index]?.message}</ErrorText>}
+                  </div>
+                  <div className="flex-1 flex gap-2">
+                    <div className='flex-1'>
+                      <label className="block text-sm font-medium mb-1 text-left">
+                        Quantity
+                      </label>
+                      <select
+                        className={`input-field`}
+                        disabled={isProcessing}
+                        value={field.quantity}
+                        onChange={(e) => update(index, { item: field.item, quantity: Number(e.target.value) })}
+                      >
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                      </select>
+                    </div>
+                    <button type='button' className='btn-danger h-8 self-end mb-0.5' onClick={() => onRemoveEquipment(field.id)}>
+                      <FontAwesomeIcon icon={faMinus} />
+                    </button>
+                  </div>
+                </div>
+              ))}
               <div className='flex space-x-4'>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-left">
@@ -282,14 +319,24 @@ export default function OrderSubmissionPage() {
               <FontAwesomeIcon icon={faArrowLeft} />
               View List
             </Link>
-            <button
-              type="submit"
-              className="btn-warning w-40"
-              disabled={isProcessing}
-            >
-              {isProcessing && <Spinner />}
-              Submit
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className='btn-primary w-40'
+                disabled={isProcessing}
+                onClick={onAddEquipment}
+              >
+                + Add Equipment
+              </button>
+              <button
+                type="submit"
+                className="btn-warning w-40"
+                disabled={isProcessing}
+              >
+                {isProcessing && <Spinner />}
+                Submit
+              </button>
+            </div>
           </div>
         </form>
       </div>

@@ -12,7 +12,7 @@ export const oauth2 = () => {
   return SMART.authorize({
     clientId: Environment.FHIR_CLIENT_ID,
     scope: "launch encounter/read launch/smart_style_url launch/patient openid fhirUser user/*.* patient/read offline_access",
-    redirectUri: "./login",
+    redirectUri: "./splash",
     iss: "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4",
     completeInTarget: true
   });

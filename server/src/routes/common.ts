@@ -35,6 +35,7 @@ commonRouter.post('/login', async (req, res) => {
 
 commonRouter.get('/GetLatestOrderByPatient', async (req, res) => {
   const { PatientID, EpicIDNumber } = req.query as any;
+  console.log({orders: globalStore.orders});
   const orders = globalStore.orders.filter(
     order =>
       order.PatientID === PatientID && order.EpicIDNumber === EpicIDNumber

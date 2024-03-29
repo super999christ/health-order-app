@@ -17,17 +17,17 @@ export default function GlobalRouter() {
     <Routes>
       <Route element={<PrivateRoute />}>
         <Route path='/' element={<HomePage />} />
-        <Route path="/splash" element={<SplashPage />} />
-        <Route path='/order/submit' element={<OrderSubmissionPage />} />
-        <Route path='/order/list' element={<OrderListPage />} />
-        <Route path='/order/view/:orderId' element={<OrderViewPage />} />
-        <Route path='/order/confirm' element={<OrderConfirmPage />} />
         <Route path='/reservation/calendar' element={<CalendarPage />} />
         <Route path='/reservation/detail' element={<ReservationDetailPage />} />
         <Route path='/reservation/submit' element={<ReservationSubmitPage />} />
       </Route>
       <Route element={<PublicRoute />}>
+        <Route path="/splash" element={<SplashPage />} />
         <Route path='/login' element={<LoginPage />} />
+        <Route path='/order/submit' element={<OrderSubmissionPage />} />
+        <Route path='/order/list' element={<OrderListPage />} />
+        <Route path='/order/view/:orderId' element={<OrderViewPage />} />
+        <Route path='/order/confirm' element={<OrderConfirmPage />} />
       </Route>
     </Routes>
   );

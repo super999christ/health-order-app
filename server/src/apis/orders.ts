@@ -6,3 +6,7 @@ export const getActivePatients = (EpicIDNumber: string) => {
     params: { EpicIDNumber }
   });
 };
+
+export const dischargePatients = (patients: { epicIDNumber: string, patientID: string }[]) => {
+  return agilityApiClient.post(Environment.API.DISCHARGE_PATIENT, patients);
+};

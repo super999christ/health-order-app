@@ -3,7 +3,7 @@ import LogoIcon from '@root/assets/images/logo.png';
 import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
 import { useAuthContext } from '@root/hooks/useAuthContext';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
@@ -11,8 +11,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
   const [isProcessing, setProcessing] = useState(false);
-  const { setLoggedIn } = useAuthContext();
+  const { isLoggedIn, setLoggedIn } = useAuthContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/reservation/calendar');
+    }
+  }, []);
   
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,7 +29,7 @@ export default function LoginPage() {
       localStorage.setItem(Environment.STORAGE.ACCESS_TOKEN, accessToken);
       localStorage.setItem(Environment.STORAGE.REFRESH_TOKEN, refreshToken);
       setLoggedIn(true);
-      navigate('/splash');
+      navigate('/reservation/calendar');
     } catch (err) {
       console.error(err);
       setError(true);
