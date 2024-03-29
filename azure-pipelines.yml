@@ -13,9 +13,10 @@ steps:
 - script: |
     cd client && npm install
     NODE_ENV=production npm run build && cd ..
-    rm -rf ./dist && mkdir dist
+    rm -rf ./dist
     cd server && npm install
     NODE_ENV=production npm run build
+    cp -a dist ..
     cp -a .env node_modules package.json package-lock.json ../dist
   displayName: 'npm install and build'
 

@@ -1,6 +1,8 @@
 {
   "type": "module",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js"
     "serve": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "build": "tsc"
