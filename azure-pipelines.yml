@@ -13,10 +13,10 @@ steps:
 - script: |
     cd client && npm install
     NODE_ENV=production npm run build && cd ..
-    cd server && npm install
     rm -rf ./dist
+    cd server && npm install
     NODE_ENV=production npm run build
-    cp -a .env .node_modules .package.json .package-lock.json ./dist
+    cp -a .env .node_modules .package.json .package-lock.json ../dist
   displayName: 'npm install and build'
 
 - task: ArchiveFiles@2
