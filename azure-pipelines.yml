@@ -11,9 +11,10 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
+    rm -rf ./dist && mkdir dist
     cd client && npm install
     NODE_ENV=production npm run build && cd ..
-    rm -rf ./dist
+    cp client/build ./dist/public
     cd server && npm install
     NODE_ENV=production npm run build
     cp -a dist ..
