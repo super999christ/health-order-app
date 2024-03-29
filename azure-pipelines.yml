@@ -14,7 +14,7 @@ steps:
     rm -rf ./dist && mkdir dist
     cd client && npm install
     NODE_ENV=production npm run build && cd ..
-    cp client/build ./dist/public
+    cp -a client/build ./dist/public
     cd server && npm install
     NODE_ENV=production npm run build
     cp -a dist ..
