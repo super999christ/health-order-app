@@ -11,12 +11,12 @@ steps:
   displayName: 'Install Node.js'
 
 - script: |
-    npm install
+    cd client && npm install
+    NODE_ENV=production npm run build && cd ..
+    cd server && npm install
+    rm -rf ./dist
     NODE_ENV=production npm run build
-    cd server && npm install && cd ..
-    rm -rf ./dist && mkdir ./dist
-    cp -a ./build ./dist/public
-    cp -a  ./server/apis ./server/logger/ ./server/middlewares ./server/utils ./server/ssl ./server/node_modules ./server/server.js ./server/package.json ./server/.env ./dist 
+    cp -a .env .node_modules .package.json .package-lock.json ./dist
   displayName: 'npm install and build'
 
 - task: ArchiveFiles@2
