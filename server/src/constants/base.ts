@@ -6,6 +6,7 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 dotenv.config({ path: path.join(dirname, '../../.env') });
+dotenv.config({ path: path.join(dirname, '../.env') });
 
 const Environment = {
   OCP_APIM_SUBSCRIPTION_KEY: process.env.OCP_APIM_SUBSCRIPTION_KEY,
@@ -19,7 +20,7 @@ const Environment = {
   API: {
     GET_ORDERS_BY_PATIENT: '/emrorderingapi/api/GetOrdersByPatient',
     GET_ACTIVE_PATIENTS: '/emrorderingapi/api/GetActivePatients',
-    DISCHARGE_PATIENT: '/emrorderingapi/api/dischargepatient',
+    DISCHARGE_PATIENT: '/emrorderingapi/api/dischargepatient'
   }
 };
 
