@@ -12,7 +12,7 @@ import { authenticateToken } from './middlewares/authenticate';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const app = express();
-const port = process.env.NODE_ENV === 'production' ? 3000 : 8000;
+const port = process.env.PORT || process.env.SERVER_PORT || (process.env.NODE_ENV === 'production' ? 3000 : 8000);
 
 app.use(cors());
 app.use(express.json());
