@@ -25,9 +25,9 @@ const baseFilePath = fileURLToPath(import.meta.url);
 const baseDirPath = dirname(baseFilePath);
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(join(baseDirPath, '../../client/build')));
+  app.use(express.static(join(baseDirPath, 'public')));
   app.get('*', (req, res) => {
-    res.sendFile(join(`${baseDirPath}/../../client/build/index.html`));
+    res.sendFile(join(`${baseDirPath}/public/index.html`));
   });
 }
 
