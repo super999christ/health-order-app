@@ -7,6 +7,7 @@ import { Alert } from '@root/components/Alert';
 import ErrorText from '@root/components/ErrorText';
 import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
+import Popup from '@root/components/Popup';
 import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
@@ -34,22 +35,25 @@ export default function OrderSubmissionPage() {
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
   const [isLoading, setLoading] = useState(true);
   const { register, getValues, handleSubmit, setError, formState: { errors }, control } = useForm<IOrderRequest>({});
+  const [isOpenPopup, setOpenPopup] = useState(false);
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'requestedItem',
     rules: {
       validate: (values: IEquipment[]) => {
         console.log({ values });
+        let isValid = true;
         for (let i = 0; i < values.length; i++) {
           if (!values[i].item) {
             setError(`requestedItem.${i}`, {
               message: 'Equipment name is required'
             });
+            isValid = false;
           } else {
             setError(`requestedItem.${i}`, {});
           }
         }
-        return true;
+        return isValid;
       }
     }
   });
@@ -108,6 +112,7 @@ export default function OrderSubmissionPage() {
       setError('root.server', {
         message: 'Something went wrong. Please try again some time later'
       });
+      setOpenPopup(true);
     } finally {
       setProcessing(false);
     }
@@ -244,11 +249,11 @@ export default function OrderSubmissionPage() {
                 </div>
                 <div className='flex-1'>
                   <label className="block text-sm font-medium mb-1 text-left">
-                    Option
+                    Priority
                   </label>
                   <select className={`input-field`} disabled={isProcessing}>
-                    <option>STAT</option>
                     <option>Routine</option>
+                    <option>STAT</option>
                   </select>
                 </div>
               </div>
@@ -339,6 +344,7 @@ export default function OrderSubmissionPage() {
             </div>
           </div>
         </form>
+        <Popup content='Something went wrong. Please try again later.' title='Order failure' open={isOpenPopup} setOpen={setOpenPopup} type='danger' />
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ const apps = [
   {
     id: 'order_app',
     name: 'Ordering App',
-    href: '/order/submit',
+    href: '/order/list',
   },
   {
     id: 'reservation_app',

@@ -103,7 +103,7 @@ export default function OrderViewPage() {
             />
           </div>
           <h1 className="text-2xl leading-snug font-semibold bg-[#1a75a3] text-white w-full p-2 text-left rounded-sm">
-            View Order
+            View Order #{orderId}
           </h1>
         </div>
         <div>
@@ -216,13 +216,21 @@ export default function OrderViewPage() {
               <FontAwesomeIcon icon={faArrowLeft} />
               View List
             </Link>
-            <button
-              type='button'
-              className="btn-danger w-32"
-              onClick={onCancelOrder}
-            >
-              Cancel Order
-            </button>
+            <div className='flex gap-2'>
+              <button
+                type='button'
+                className='btn-success w-40'
+              >
+                Request Pickup
+              </button>
+              <button
+                type='button'
+                className="btn-danger w-32"
+                onClick={onCancelOrder}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       </div>

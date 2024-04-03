@@ -62,8 +62,7 @@ export default function OrderListPage() {
   };
 
   const getEquipmentName = (code: string) => {
-    // TODO:  return catalogItems.find(item => item.orderCode === code)?.itemName || '';
-    return code;
+    return catalogItems.find(item => item.orderCode === code)?.itemName || '';
   }
 
   const getColorFromOrderStatus = (orderStatus: string): ColorMode => {
@@ -151,7 +150,7 @@ export default function OrderListPage() {
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                   Order ID
                 </th>
-                <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900 max-w-52">
                   Equipment
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
@@ -174,12 +173,12 @@ export default function OrderListPage() {
                       {order.orderID}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm">{getEquipmentName(order.requestedItem)}</td>
+                  <td className="text-center px-3 py-4 text-sm max-w-52">{getEquipmentName(order.requestedItem)}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm flex justify-center gap-1">
                     <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
                       <FontAwesomeIcon icon={faCancel} />
                     </button>
-                    <button className='btn-success' title="Pick Up">
+                    <button className='btn-success' title="Request Pickup">
                       <FontAwesomeIcon icon={faShieldCheck} />
                     </button>
                   </td>

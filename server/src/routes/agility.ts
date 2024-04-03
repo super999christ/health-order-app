@@ -6,7 +6,6 @@ import { agilityApiClient } from '../constants/api';
 const agilityRouter = Router();
 
 agilityRouter.all('/*', async (req: Request, res: Response) => {
-  console.log("@User: ", req.user);
   try {
     const response = await agilityApiClient({
       method: req.method,
