@@ -12,7 +12,8 @@ export const StatusBadge: React.FC<PropsWithChildren<IStatusBadgeProps>> = ({ co
     primary: 'text-blue-600',
     danger: 'text-red-600',
     warning: 'text-amber-600',
-    success: 'text-green-600'
+    success: 'text-green-600',
+    info: 'text-cyan-600',
   }
   return (
     <div className={`${className[color]} font-bold`}>

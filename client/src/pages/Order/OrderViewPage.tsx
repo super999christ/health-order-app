@@ -1,6 +1,6 @@
 import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cancelOrder, getOrdersByPatient } from '@root/apis/orders';
+import { cancelOrder, getOrdersByPatient, requestPickup } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
@@ -78,6 +78,13 @@ export default function OrderViewPage() {
   const onCancelOrder = async () => {
     if (confirm("Are you sure you want to cancel this order?")) {
       await cancelOrder([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: orderId! }]);
+      navigate('/order/list');
+    }
+  };
+
+  const onRequestPickup = async () => {
+    if (confirm("Are you sure you want to request this order?")) {
+      await requestPickup([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: orderId!, requestpickup: true }])
       navigate('/order/list');
     }
   };
@@ -220,6 +227,8 @@ export default function OrderViewPage() {
               <button
                 type='button'
                 className='btn-success w-40'
+                onClick={onRequestPickup}
+                disabled={currentOrder?.orderStatus !== 'In Transit' && currentOrder?.orderStatus !== 'Delivered'}
               >
                 Request Pickup
               </button>
@@ -227,6 +236,7 @@ export default function OrderViewPage() {
                 type='button'
                 className="btn-danger w-32"
                 onClick={onCancelOrder}
+                disabled={currentOrder?.orderStatus !== 'Submitted'}
               >
                 Cancel
               </button>

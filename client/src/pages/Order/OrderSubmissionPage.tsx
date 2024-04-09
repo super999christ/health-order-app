@@ -344,7 +344,7 @@ export default function OrderSubmissionPage() {
             </div>
           </div>
         </form>
-        <Popup content='Something went wrong. Please try again later.' title='Order failure' open={isOpenPopup} setOpen={setOpenPopup} type='danger' />
+        <Popup content='We encountered an error. Please reach out to the Agiliti team at 1-800-814-9389 or submit your order at a later time.' title='Order failure' open={isOpenPopup} setOpen={setOpenPopup} type='danger' />
       </div>
     </div>
   );

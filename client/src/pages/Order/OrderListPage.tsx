@@ -1,7 +1,7 @@
 import { faArrowRight, faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
 import { faCancel, faShieldCheck } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { cancelOrder, getOrdersByPatient } from '@root/apis/orders';
+import { cancelOrder, getOrdersByPatient, requestPickup } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
@@ -31,7 +31,7 @@ export default function OrderListPage() {
       setLoading(true);
       getOrdersByPatient({ PatientID, EpicIDNumber: Environment.EPIC_ID_NUMBER })
         .then(res => {
-          setOrders(res);
+          setOrders(res.reverse());
         })
         .catch(err => {
           console.log("Error while getting orders: ", { PatientID }, err);
@@ -67,9 +67,17 @@ export default function OrderListPage() {
 
   const getColorFromOrderStatus = (orderStatus: string): ColorMode => {
     switch (orderStatus) {
-      case '':
-      case 'open':
+      case 'Submitted':
+        return 'primary';
+      case 'Delivered':
+      case 'In Transit':
+        return 'warning';
+      case 'Pick Up Requested':
+        return 'info';
+      case 'Picked Up':
         return 'success';
+      case 'Cancelled':
+        return 'danger';
     }
     return 'primary';
   }
@@ -80,7 +88,6 @@ export default function OrderListPage() {
         setLoading(true);
         await cancelOrder([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: String(orderId) }]);
         setLoading(false);
-        navigate('/order/list');
         setTimeout(() => {
           alert("Order was cancelled successfully");
         }, 200);
@@ -92,6 +99,24 @@ export default function OrderListPage() {
       }
     }
   };
+
+  const onRequestPickup = async (orderId: number) => {
+    if (confirm("Are you sure you want to request pickup for this order?")) {
+      try {
+        setLoading(true);
+        await requestPickup([{ epicIDNumber: Environment.EPIC_ID_NUMBER, orderID: String(orderId), requestpickup: true }]);
+        setLoading(false);
+        setTimeout(() => {
+          alert("Order pickup request was submitted successfully");
+        }, 200);
+      } catch (err) {
+        setLoading(false);
+        setTimeout(() => {
+          alert("Something went wrong. Please try again later.");
+        }, 200);
+      }
+    }
+  }
 
   return (
     <div className="flex flex-col lg:mt-[80px] mb-8 mx-auto w-fit p-6 bg-white border rounded-3xl lg:w-[1050px]">
@@ -175,10 +200,10 @@ export default function OrderListPage() {
                   </td>
                   <td className="text-center px-3 py-4 text-sm max-w-52">{getEquipmentName(order.requestedItem)}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm flex justify-center gap-1">
-                    <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
+                    <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)} disabled={order.orderStatus !== 'Submitted'}>
                       <FontAwesomeIcon icon={faCancel} />
                     </button>
-                    <button className='btn-success' title="Request Pickup">
+                    <button className='btn-success' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}  disabled={order.orderStatus !== 'In Transit' && order.orderStatus !== 'Delivered'}>
                       <FontAwesomeIcon icon={faShieldCheck} />
                     </button>
                   </td>
