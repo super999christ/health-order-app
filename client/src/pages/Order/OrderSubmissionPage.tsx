@@ -25,7 +25,7 @@ export interface IOrderRequest {
 
 export interface IEquipment {
   item: string;
-  quantity: number;
+  qty: number;
 };
 
 export default function OrderSubmissionPage() {
@@ -76,7 +76,7 @@ export default function OrderSubmissionPage() {
   const onAddEquipment = () => {
     append({
       item: '',
-      quantity: 1
+      qty: 1
     });
   };
 
@@ -272,7 +272,7 @@ export default function OrderSubmissionPage() {
                       className={`input-field`}
                       disabled={isProcessing}
                       value={field.item}
-                      onChange={(e) => update(index, { item: e.target.value, quantity: field.quantity })}
+                      onChange={(e) => update(index, { item: e.target.value, qty: field.qty })}
                     >
                       <option value="">Please choose an equipment</option>
                       {catalogItems.map(item => (
@@ -289,8 +289,8 @@ export default function OrderSubmissionPage() {
                       <select
                         className={`input-field`}
                         disabled={isProcessing}
-                        value={field.quantity}
-                        onChange={(e) => update(index, { item: field.item, quantity: Number(e.target.value) })}
+                        value={field.qty}
+                        onChange={(e) => update(index, { item: field.item, qty: Number(e.target.value) })}
                       >
                         <option value={1}>1</option>
                         <option value={2}>2</option>
@@ -313,6 +313,7 @@ export default function OrderSubmissionPage() {
                     placeholder="Your comment here"
                     disabled={isProcessing}
                     {...register('specialInstructions')}
+                    maxLength={5000}
                   />
                 </div>
               </div>
