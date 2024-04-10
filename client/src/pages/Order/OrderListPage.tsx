@@ -1,5 +1,5 @@
 import { faArrowRight, faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
-import { faCancel, faShieldCheck } from '@fortawesome/pro-solid-svg-icons';
+import { faCancel, faTruck } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cancelOrder, getOrdersByPatient, requestPickup } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
@@ -50,9 +50,6 @@ export default function OrderListPage() {
     if (facilityCode) {
       getProductCatalog(facilityCode).then(items => {
         setCatalogItems(items);
-        if (items.length > 0) {
-          
-        }
       });
     }
   }, [meta]);
@@ -204,7 +201,7 @@ export default function OrderListPage() {
                       <FontAwesomeIcon icon={faCancel} />
                     </button>
                     <button className='btn-success' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}  disabled={order.orderStatus !== 'In Transit' && order.orderStatus !== 'Delivered'}>
-                      <FontAwesomeIcon icon={faShieldCheck} />
+                      <FontAwesomeIcon icon={faTruck} />
                     </button>
                   </td>
                 </tr>
