@@ -12,7 +12,7 @@ export const OrderCard = () => {
           </div>
           <div className="text-gray-500 font-normal">
             Patient Name
-            <div className="text-black">Randall Christ</div>
+            <div className="text-black">Patient Name</div>
           </div>
           <div className="text-gray-500 font-normal w-fit">
             Status

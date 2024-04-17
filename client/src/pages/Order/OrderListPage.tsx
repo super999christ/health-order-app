@@ -1,5 +1,4 @@
 import { faArrowRight, faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
-import { faCancel, faTruck } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cancelOrder, getOrdersByPatient, requestPickup } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
@@ -191,7 +190,7 @@ export default function OrderListPage() {
                     </StatusBadge>
                   </td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
-                    <Link to={`/order/view/${order.orderID}`} className="text-indigo-600 hover:text-indigo-900 hover:underline">
+                    <Link to={`/order/view/${order.orderID}`} className="text-indigo-600 hover:text-indigo-900 underline">
                       {order.orderID}
                     </Link>
                   </td>

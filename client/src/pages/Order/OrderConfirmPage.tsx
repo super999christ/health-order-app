@@ -1,4 +1,4 @@
-import { faAngleLeft, faEye } from '@fortawesome/pro-regular-svg-icons';
+import { faEye } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getLatestOrder } from '@root/apis/orders';
 import LogoIcon from '@root/assets/images/logo.png';
@@ -60,10 +60,9 @@ export default function OrderConfirmPage() {
             />
           </div>
           <h1 className="text-2xl leading-snug text-gray-800 font-semibold mb-2">
-            Order Confirmation #{orderId}
+            Order Confirmed
           </h1>
           <div className="text-sm">
-            {!isLoading && !error && 'New order was created successfully'}
             {error}
           </div>
         </div>
@@ -80,14 +79,6 @@ export default function OrderConfirmPage() {
           >
             <FontAwesomeIcon icon={faEye} size='lg' className='mr-1' />
             View
-          </button>
-          <button
-            className={`btn-back mt-4`}
-            type="submit"
-            onClick={onBack}
-          >
-            <FontAwesomeIcon icon={faAngleLeft} size='lg' className='mr-1' />
-            Back
           </button>
         </form>
       </div>

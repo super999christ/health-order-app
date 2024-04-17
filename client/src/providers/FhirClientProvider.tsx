@@ -86,8 +86,8 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
       setMeta({
         facilityCode: fhirClient.getState("tokenResponse.facility") || 'GHS',
         department: fhirClient.getState("tokenResponse.department") || "KHMRG",
-        firstName: fhirClient.getState("tokenResponse.userFname") || "Randall",
-        lastName: fhirClient.getState("tokenResponse.userLname") || "Christ",
+        firstName: fhirClient.getState("tokenResponse.userFname") || "User",
+        lastName: fhirClient.getState("tokenResponse.userLname") || "Name",
       });
     }
   }, [fhirClient]);

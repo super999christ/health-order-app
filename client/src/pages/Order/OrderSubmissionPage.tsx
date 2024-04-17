@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { submitOrder } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
 import LogoIcon from '@root/assets/images/logo.png';
-import { Alert } from '@root/components/Alert';
 import ErrorText from '@root/components/ErrorText';
 import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
@@ -12,7 +11,7 @@ import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
-import { orderCreatorPhoneNumberValidatorOptions, requestedItemValidatorOptions } from '@root/validators/order-form-validation';
+import { orderCreatorPhoneNumberValidatorOptions } from '@root/validators/order-form-validation';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -21,12 +20,12 @@ export interface IOrderRequest {
   orderCreatorPhoneNumber: string;
   requestedItem: IEquipment[];
   specialInstructions: string;
-};
+}
 
 export interface IEquipment {
   item: string;
   qty: number;
-};
+}
 
 export default function OrderSubmissionPage() {
   const [isProcessing, setProcessing] = useState(false);
@@ -257,11 +256,16 @@ export default function OrderSubmissionPage() {
                   </select>
                 </div>
               </div>
-              {!fields.length && (
-                <Alert color='warning' className='my-2'>
-                  Please add equipments to the order
-                </Alert>
-              )}
+              <div className='flex justify-end'>
+                <button
+                  type="button"
+                  className='btn-primary w-60 h-9'
+                  disabled={isProcessing}
+                  onClick={onAddEquipment}
+                >
+                  + Add Equipment
+                </button>
+              </div>
               {fields.map((field, index) => (
                 <div className="flex space-x-4 gap-4" key={field.id}>
                   <div className="flex-1">
@@ -313,7 +317,7 @@ export default function OrderSubmissionPage() {
                     placeholder="Your comment here"
                     disabled={isProcessing}
                     {...register('specialInstructions')}
-                    maxLength={5000}
+                    maxLength={50}
                   />
                 </div>
               </div>
@@ -326,14 +330,6 @@ export default function OrderSubmissionPage() {
               View List
             </Link>
             <div className="flex gap-2">
-              <button
-                type="button"
-                className='btn-primary w-40'
-                disabled={isProcessing}
-                onClick={onAddEquipment}
-              >
-                + Add Equipment
-              </button>
               <button
                 type="submit"
                 className="btn-warning w-40"
