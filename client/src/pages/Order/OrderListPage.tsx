@@ -41,7 +41,13 @@ export default function OrderListPage() {
   }, [patient]);
 
   useEffect(() => {
-    setFilteredOrders(orders.filter(order => order.orderedBy.toLowerCase().includes(searchKeyword.toLowerCase())));
+    setFilteredOrders(orders.filter(order => {
+      if (order.orderedBy.toLowerCase().includes(searchKeyword.toLowerCase()))
+        return true;
+      if (getEquipmentName(order.requestedItem).toLowerCase().includes(searchKeyword.toLowerCase()))
+        return true;
+      return false;
+  }));
   }, [orders, searchKeyword]);
 
   useEffect(() => {
