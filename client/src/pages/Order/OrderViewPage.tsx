@@ -224,22 +224,24 @@ export default function OrderViewPage() {
               View List
             </Link>
             <div className='flex gap-2'>
-              <button
-                type='button'
-                className='btn-success w-40'
-                onClick={onRequestPickup}
-                disabled={currentOrder?.orderStatus !== 'In Transit' && currentOrder?.orderStatus !== 'Delivered'}
-              >
-                Request Pickup
-              </button>
-              <button
-                type='button'
-                className="btn-danger w-32"
-                onClick={onCancelOrder}
-                disabled={currentOrder?.orderStatus !== 'Submitted'}
-              >
-                Cancel
-              </button>
+              {currentOrder?.orderStatus === 'In Transit' || currentOrder?.orderStatus === 'Delivered' && (
+                <button
+                  type='button'
+                  className='btn-success w-40'
+                  onClick={onRequestPickup}
+                >
+                  Request Pickup
+                </button>
+              )}
+              {currentOrder?.orderStatus === 'Submitted' && (
+                <button
+                  type='button'
+                  className="btn-danger w-32"
+                  onClick={onCancelOrder}
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           </div>
         </div>

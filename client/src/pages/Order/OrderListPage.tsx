@@ -202,12 +202,16 @@ export default function OrderListPage() {
                   </td>
                   <td className="text-center px-3 py-4 text-sm max-w-52">{getEquipmentName(order.requestedItem)}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm flex flex-col justify-center gap-1">
-                    <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)} disabled={order.orderStatus !== 'Submitted'}>
-                      Cancel
-                    </button>
-                    <button className='btn-success' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}  disabled={order.orderStatus !== 'In Transit' && order.orderStatus !== 'Delivered'}>
-                      Pick up
-                    </button>
+                    {order.orderStatus === 'Submitted' && (
+                      <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
+                        Cancel
+                      </button>
+                    )}
+                    {(order.orderStatus === 'In Transit' || order.orderStatus === 'Delivered') && (
+                      <button className='btn-success' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}>
+                        Pick up
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
