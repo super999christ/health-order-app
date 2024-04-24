@@ -7,6 +7,6 @@ interface ISpinnerProps {
 
 export default function Spinner({ size }: ISpinnerProps) {
   return (
-    <FontAwesomeIcon icon={faSpinnerThird} spin fontSize={size === 'lg' ? 55 : 20} className="mx-1 text-gray-400" />
+    <FontAwesomeIcon icon={faSpinnerThird} spin fontSize={size === 'lg' ? 55 : 20} className="mx-1 text-gray-800" />
   );
 }

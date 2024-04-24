@@ -41,5 +41,5 @@ export const parseJwt = (token: string) => {
 
 export const getUsername = (token: string) => {
   const jwt = parseJwt(token);
-  return jwt ? jwt.username : "";
+  return jwt ? jwt.userId : "";
 };

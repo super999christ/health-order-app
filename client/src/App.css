@@ -1,3 +1,9 @@
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-calendars/styles/material.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -103,4 +109,12 @@ input {
   @apply outline-0;
   @apply focus:outline-0;
   @apply focus-visible:outline-0;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+[style*='font-family: Helvetica Neue, Helvetica, Arial;'] {
+  display: none;
 }

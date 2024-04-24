@@ -1,31 +1,47 @@
 import { faArrowLeft } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getDoctors } from '@root/apis/doctors';
+import { getProcedures } from '@root/apis/procedures';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LogoutButton } from '@root/components/LogoutButton';
 import Spinner from '@root/components/Spinner';
 import { useAuthContext } from '@root/hooks/useAuthContext';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useFhirContext } from '@root/hooks/useFhirContext';
+import { TimePickerComponent } from '@syncfusion/ej2-react-calendars';
+import { useEffect, useState } from 'react';
+import ReactDatePicker from 'react-datepicker';
+import { Controller, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+import ErrorWrapper from '@root/components/ErrorWrapper';
+import { combineDate, getMinimumReservationDate } from '@root/utils/date';
+import { createReservation } from '@root/apis/reservations';
 
 export interface IReservationRequest {
   FACILITYID: string;
   RESERVEDBY: string;
+  RESERVATIONDATE?: Date;
   TECHONLY: boolean;
   COMMENTS: string;
   REQSTART: string;
   REQEND: string;
   CASEDATE: string;
+  SCHEDULEREMAIL: string;
   SCHEDULERPHONE: string;
   PROCEDUREID: string;
   DOCTORID: string;
   SCHEDULER: string;
-};
+  PATIENT: string;
+}
 
 export default function ReservationSubmitPage() {
   const [isProcessing, setProcessing] = useState(false);
   const { username } = useAuthContext();
-  const { register, getValues, setValue, handleSubmit, setError, formState: { errors } } = useForm<IReservationRequest>({
+  const navigate = useNavigate();
+  const [procedureOptions, setProcedureOptions] = useState([]);
+  const [doctorOptions, setDoctorOptions] = useState([]);
+  const { patient } = useFhirContext();
+  const { register, getValues, setValue, handleSubmit, formState: { errors }, setError, control, watch } = useForm<IReservationRequest>({
     defaultValues: {
       FACILITYID: '5670',
       RESERVEDBY: username,
@@ -34,8 +50,50 @@ export default function ReservationSubmitPage() {
     }
   });
 
-  const onSubmit = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setProcessing(true);
+        const doctorsData = await getDoctors();
+        const proceduresData = await getProcedures();
+        const doctorOptions = doctorsData.map((d: any) => ({
+          value: d.DOCTORID,
+          label: d.NAME
+        }));
+        const procedureOptions = proceduresData.map((p: any) => ({
+          value: p.PROCEDUREID,
+          label: p.DESCR,
+        }));
+        setDoctorOptions(doctorOptions);
+        setProcedureOptions(procedureOptions);
+        const patientName = patient?.name?.find((n) => n.use === "usual")?.text || '';
+        setValue('PATIENT', patientName);
+      } catch (err) {
+        console.log("Error while fetching doctors/procedures data: ", err);
+        alert("Error while fetching doctors/procedures data");
+      } finally {
+        setProcessing(false);
+      }
+    };
+    fetchData();
+  }, []);
 
+  const onSubmit = async () => {
+    const values = getValues();
+    const formData = {
+      ...values,
+      REQSTART: combineDate(values.RESERVATIONDATE!, values.REQSTART),
+      REQEND: combineDate(values.RESERVATIONDATE!, values.REQEND),
+      CASEDATE: combineDate(values.RESERVATIONDATE!, values.REQEND)
+    };
+    try {
+      await createReservation(formData);
+      navigate("/reservation/calendar");
+    } catch (err) {
+      setError('root.server', {
+        message: 'Something went wrong. Please try again some time later'
+      });
+    }
   };
   
   return (
@@ -56,7 +114,7 @@ export default function ReservationSubmitPage() {
             Make New Reservation
           </h1>
           <div className="text-sm text-red-500">
-            Note: The system will only accept reservations for cases scheduled 36 hours in advance. Reservation made must be for after 03/06/2024 07:09 PM. If you would like to make a reservation within 36 hours, please call our Scheduling Department at 800.660.6162, Option 1.
+            Note: The system will only accept reservations for cases scheduled 36 hours in advance. Reservation made must be for after {getMinimumReservationDate()}. If you would like to make a reservation within 36 hours, please call our Scheduling Department at 800.660.6162, Option 1.
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} action='#'>
@@ -67,32 +125,75 @@ export default function ReservationSubmitPage() {
                   <label className="block text-sm font-medium mb-1">
                     Select Date For New Reservation
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    
+                  <Controller
+                    control={control}
+                    name='RESERVATIONDATE'
+                    render={({ field: { onChange, value } }) => (
+                      <ReactDatePicker
+                        selected={value}
+                        onChange={date => onChange(date)}
+                        isClearable
+                        className='input-field'
+                      />
+                    )}
+                    rules={
+                      {
+                        required: {
+                          value: true,
+                          message: 'Please input reservation date!'
+                        },
+                        validate: () => {
+                          const current = dayjs().add(watch('REQSTART') ? 36 : 24, "hours");
+                          const startDate = combineDate(watch('RESERVATIONDATE') || new Date(), `${watch('REQSTART') || '2024-01-01 00:00:00'}`);
+                          if (current.isBefore(startDate)) {
+                            return true;
+                          } else {
+                            return 'This schedule request is within 36 hours of the requested Case time.';
+                          }
+                        }
+                      }
+                    }
                   />
+                  <ErrorWrapper>{errors.RESERVATIONDATE?.message}</ErrorWrapper>
                 </div>
                 <div className='flex flex-1 gap-2'>
-                  <div className="max-w-44">
+                  <div className="max-w-44 flex-1">
                     <label className="block text-sm font-medium mb-1">
                       Preferred Start Time
                     </label>
-                    <input
-                      className={`input-field !bg-gray-50`}
-                      type="text"
-                      readOnly={true}
+                    <TimePickerComponent
+                      allowEdit={false}
+                      className={`input-field !h-6`}
+                      step={15}
+                      openOnFocus={true}
+                      max={new Date(watch('REQEND') || new Date().setHours(23, 44, 59, 0))}
+                      {...register('REQSTART', {
+                        required: {
+                          value: true,
+                          message: 'Please input your preferred start time!'
+                        }
+                      })}
                     />
+                    <ErrorWrapper>{errors.REQSTART?.message}</ErrorWrapper>
                   </div>
-                  <div className="max-w-44">
+                  <div className="max-w-44 flex-1">
                     <label className="block text-sm font-medium mb-1">
                       Preferred End Time
                     </label>
-                    <input
-                      className={`input-field !bg-gray-50`}
-                      type="text"
-                      readOnly={true}
+                    <TimePickerComponent
+                      allowEdit={false}
+                      className={`input-field !h-6`}
+                      step={15}
+                      openOnFocus={true}
+                      min={new Date(watch('REQSTART') || new Date().setHours(0, 15, 0, 0))}
+                      {...register('REQEND', {
+                        required: {
+                          value: true,
+                          message: 'Please input your preferred end time!'
+                        }
+                      })}
                     />
+                    <ErrorWrapper>{errors.REQEND?.message}</ErrorWrapper>
                   </div>
                 </div>
               </div>
@@ -101,21 +202,35 @@ export default function ReservationSubmitPage() {
                   <label className="block text-sm font-medium mb-1">
                     Select Medical Procedure
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                  />
+                  <select className='input-field' {...register('PROCEDUREID', {
+                      required: {
+                        value: true,
+                        message: 'Please select procedure info!'
+                      }
+                    })}>
+                    <option value={''}>Select an option</option>
+                    {procedureOptions.map((proc: any) => (
+                      <option key={proc.value} value={proc.value}>{proc.label}</option>
+                    ))}
+                  </select>
+                  <ErrorWrapper>{errors.PROCEDUREID?.message}</ErrorWrapper>
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">
                     Select Doctor
                   </label>
-                  <input
-                    className={`input-field !bg-gray-50`}
-                    type="text"
-                    readOnly={true}
-                  />
+                  <select className='input-field' {...register('DOCTORID', {
+                      required: {
+                        value: true,
+                        message: 'Please select your doctor!'
+                      }
+                    })}>
+                    <option value={''}>Select an option</option>
+                    {doctorOptions.map((doc: any) => (
+                      <option key={doc.value} value={doc.value}>{doc.label}</option>
+                    ))}
+                  </select>
+                  <ErrorWrapper>{errors.DOCTORID?.message}</ErrorWrapper>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -126,6 +241,7 @@ export default function ReservationSubmitPage() {
                   <input
                     className={`!bg-gray-50 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600`}
                     type="checkbox"
+                    {...register('TECHONLY')}
                   />
                 </div>
               </div>
@@ -138,17 +254,30 @@ export default function ReservationSubmitPage() {
                     className={`input-field !bg-gray-50`}
                     type="text"
                     readOnly={true}
+                    {...register('PATIENT', {
+                      required: {
+                        value: true,
+                        message: 'Please input patient name!'
+                      }
+                    })}
                   />
+                  <ErrorWrapper>{errors.PATIENT?.message}</ErrorWrapper>
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">
                     Scheduler Name
                   </label>
                   <input
-                    className={`input-field !bg-gray-50`}
+                    className={`input-field`}
                     type="text"
-                    readOnly={true}
+                    {...register('SCHEDULER', {
+                      required: {
+                        value: true,
+                        message: 'Please input scheduler name!'
+                      }
+                    })}
                   />
+                  <ErrorWrapper>{errors.SCHEDULER?.message}</ErrorWrapper>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -157,20 +286,36 @@ export default function ReservationSubmitPage() {
                     Phone
                   </label>
                   <input
-                    className={`input-field !bg-gray-50`}
+                    className={`input-field`}
                     type="text"
-                    readOnly={true}
+                    {...register('SCHEDULERPHONE', {
+                      required: {
+                        value: true,
+                        message: 'Please input scheduler phone!'
+                      },
+                      pattern: {
+                        value: /^\d{3}-\d{3}-\d{4}$/,
+                        message: 'Phone number should be xxx-xxx-xxxx!'
+                      }
+                    })}
                   />
+                  <ErrorWrapper>{errors.SCHEDULERPHONE?.message}</ErrorWrapper>
                 </div>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1">
                     Email
                   </label>
                   <input
-                    className={`input-field !bg-gray-50`}
+                    className={`input-field`}
                     type="text"
-                    readOnly={true}
+                    {...register('SCHEDULEREMAIL', {
+                      required: {
+                        value: true,
+                        message: 'Please input scheduler email!'
+                      }
+                    })}
                   />
+                  <ErrorWrapper>{errors.SCHEDULEREMAIL?.message}</ErrorWrapper>
                 </div>
               </div>
               <div className="flex gap-6">
@@ -179,8 +324,8 @@ export default function ReservationSubmitPage() {
                     Comment
                   </label>
                   <textarea
-                    className={`textarea-field !bg-gray-50`}
-                    readOnly={true}
+                    className={`textarea-field`}
+                    {...register('COMMENTS')}
                   />
                 </div>
               </div>
@@ -200,6 +345,7 @@ export default function ReservationSubmitPage() {
               Submit
             </button>
           </div>
+          <ErrorWrapper>{errors.root?.server.message}</ErrorWrapper>
         </form>
       </div>
     </div>

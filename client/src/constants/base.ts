@@ -13,6 +13,8 @@ const Environment = {
     ROTATE_TOKEN: '/api/common/token-refresh',
     CREATE_RESERVATION: '/api/agility/reservationapi/scheduler/api/newreservations',
     GET_RESERVATIONS: '/api/agility/reservationapi/scheduler/api/getreservations',
+    GET_PHYSICIANS: '/api/agility/reservationapi/scheduler/api/getphysicians',
+    GET_PROCEDURES: '/api/agility/reservationapi/scheduler/api/getprocedures',
   },
   STORAGE: {
     ACCESS_TOKEN: 'access_token',

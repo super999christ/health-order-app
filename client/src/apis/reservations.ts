@@ -7,6 +7,7 @@ export const createReservation = async (reservationData: unknown) => {
     return res.data;
   } catch (err) {
     console.log("Error while creating a reservation: ", err);
+    throw err;
   }
 };
 
