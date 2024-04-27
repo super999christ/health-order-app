@@ -1,4 +1,4 @@
-import { faArrowRight, faPlus, faSearch } from '@fortawesome/pro-regular-svg-icons';
+import { faPlus } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { cancelOrder, getOrdersByPatient, requestPickup } from '@root/apis/orders';
 import { getProductCatalog } from '@root/apis/products';
@@ -21,8 +21,6 @@ export default function OrderListPage() {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [filteredOrders, setFilteredOrders] = useState<IOrder[]>([]);
 
   useEffect(() => {
     const PatientID = patient?.id as string;
@@ -39,16 +37,6 @@ export default function OrderListPage() {
         });
     }
   }, [patient]);
-
-  useEffect(() => {
-    setFilteredOrders(orders.filter(order => {
-      if (order.orderedBy.toLowerCase().includes(searchKeyword.toLowerCase()))
-        return true;
-      if (getEquipmentName(order.requestedItem).toLowerCase().includes(searchKeyword.toLowerCase()))
-        return true;
-      return false;
-  }));
-  }, [orders, searchKeyword]);
 
   useEffect(() => {
     const facilityCode = meta?.facilityCode;
@@ -68,21 +56,30 @@ export default function OrderListPage() {
   }
 
   const getColorFromOrderStatus = (orderStatus: string): ColorMode => {
-    switch (orderStatus) {
-      case 'Submitted':
-        return 'primary';
-      case 'Delivered':
-      case 'In Transit':
-        return 'warning';
-      case 'Pick Up Requested':
-        return 'info';
-      case 'Picked Up':
-        return 'success';
-      case 'Cancelled':
-        return 'danger';
-    }
-    return 'primary';
+    return 'primary' || orderStatus;
+    // switch (orderStatus) {
+    //   case 'Submitted':
+    //     return 'primary';
+    //   case 'Delivered':
+    //   case 'In Transit':
+    //     return 'warning';
+    //   case 'Pick Up Requested':
+    //     return 'info';
+    //   case 'Picked Up':
+    //     return 'success';
+    //   case 'Cancelled':
+    //     return 'danger';
+    // }
+    // return 'primary';
   }
+
+  const getTextFromOrderStatus = (orderStatus: string): string => {
+    if (!orderStatus)
+      return 'Open';
+    if (orderStatus === 'Cancelled')
+      return 'Cancel';
+    return orderStatus;
+  };
 
   const onCancelOrder = async (orderId: number) => {
     if (confirm("Are you sure you want to cancel this order?")) {
@@ -125,10 +122,10 @@ export default function OrderListPage() {
       <LogoutButton />
       {isLoading && <LoadingBar />}
       <div className="relative px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-6 flex flex-col items-center">
+        <div className="text-center flex flex-col items-center">
           <div className="mb-4">
             <img
-              className="mt-4 inline-flex rounded-full"
+              className="inline-flex rounded-full"
               src={LogoIcon}
               alt="User"
             />
@@ -139,29 +136,13 @@ export default function OrderListPage() {
         </div>
       </div>
       <div className='flex flex-col sm:px-8'>
-        <div className="w-full flex gap-2">
-          <div className='flex-1'>
-            <label className="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <FontAwesomeIcon icon={faSearch} size='sm' />
-              </div>
-              <input type="search" className="block w-full p-3 h-10 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Search orders" value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} required />
-              {!searchKeyword && (
-                <div className="absolute inset-y-0 end-2.5 flex items-center ps-3 pointer-events-none">
-                    <FontAwesomeIcon icon={faArrowRight} size='sm' />
-                </div>
-              )}
-            </div>
-          </div>
-          <div className='flex items-center'>
-            <button type="button" className='btn-success h-full min-w-[120px] flex gap-1' onClick={onNewOrder}>
-              <FontAwesomeIcon icon={faPlus} size='lg' />
-              New Order
-            </button>
-          </div>
+        <div className='flex justify-end my-4'>
+          <button type="button" className='btn-success h-full min-w-[220px] flex gap-1' onClick={onNewOrder}>
+            <FontAwesomeIcon icon={faPlus} size='lg' />
+            New Order
+          </button>
         </div>
-        <div className='flex flex-wrap justify-center lg:justify-around items-center gap-6 mt-4'>
+        <div className='flex flex-wrap justify-center lg:justify-around items-center gap-6'>
           <table className="min-w-full divide-y divide-gray-300">
             <thead>
               <tr>
@@ -186,13 +167,13 @@ export default function OrderListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredOrders.map((order: IOrder) => (
+              {orders.map((order: IOrder) => (
                 <tr key={order.orderID} className='text-gray-900 even:bg-gray-50'>
                   <td className="whitespace-nowrap text-left px-3 py-4 pl-0 text-sm">{formatDateTime(order.createdDate)}</td>
                   <td className="whitespace-nowrap text-left px-3 py-4 text-sm">{order.orderedBy}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
                     <StatusBadge color={getColorFromOrderStatus(order.orderStatus)}>
-                      {order.orderStatus || 'OPEN'}
+                      {getTextFromOrderStatus(order.orderStatus)}
                     </StatusBadge>
                   </td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
@@ -201,14 +182,14 @@ export default function OrderListPage() {
                     </Link>
                   </td>
                   <td className="text-center px-3 py-4 text-sm max-w-52">{getEquipmentName(order.requestedItem)}</td>
-                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm flex flex-col justify-center gap-1">
+                  <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
                     {order.orderStatus === 'Submitted' && (
-                      <button className='btn-danger' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
+                      <button className='btn-danger w-full' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
                         Cancel
                       </button>
                     )}
                     {(order.orderStatus === 'In Transit' || order.orderStatus === 'Delivered') && (
-                      <button className='btn-success' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}>
+                      <button className='btn-success w-full mt-2' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}>
                         Pick up
                       </button>
                     )}

@@ -33,14 +33,13 @@ export default function OrderSubmissionPage() {
   const { patient, encounter, fhirClient, meta } = useFhirContext();
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
   const [isLoading, setLoading] = useState(true);
-  const { register, getValues, handleSubmit, setError, formState: { errors }, control } = useForm<IOrderRequest>({});
+  const { register, getValues, handleSubmit, setError, formState: { errors }, control, clearErrors, trigger } = useForm<IOrderRequest>({});
   const [isOpenPopup, setOpenPopup] = useState(false);
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'requestedItem',
     rules: {
       validate: (values: IEquipment[]) => {
-        console.log({ values });
         let isValid = true;
         for (let i = 0; i < values.length; i++) {
           if (!values[i].item) {
@@ -49,7 +48,7 @@ export default function OrderSubmissionPage() {
             });
             isValid = false;
           } else {
-            setError(`requestedItem.${i}`, {});
+            clearErrors(`requestedItem.${i}`);
           }
         }
         return isValid;
@@ -73,6 +72,7 @@ export default function OrderSubmissionPage() {
   }, [patient, catalogItems]);
 
   const onAddEquipment = () => {
+    clearErrors('root.equipments');
     append({
       item: '',
       qty: 1
@@ -83,10 +83,31 @@ export default function OrderSubmissionPage() {
     remove(fields.findIndex(field => field.id === itemId));
   };
 
+  const checkManualValidation = () => {
+    const formValues = getValues();
+    let isValid = true;
+    if (!formValues.requestedItem.length) {
+      setError('root.equipments', {
+        message: 'Please add at least one equipment'
+      });
+      isValid = false;
+    } else {
+      clearErrors('root.equipments');
+    }
+    return isValid;
+  };
+
+  const onClickSubmit = () => {
+    if (checkManualValidation()) trigger();
+  };
+
   const onSubmit = async () => {
     try {
-      setProcessing(true);
+      const isValid = checkManualValidation() && (await trigger());
+      if (!isValid) return;
       const formValues = getValues();
+      setProcessing(true);
+      clearErrors('root.server');
       await submitOrder({
         ...formValues,
         facilityCode: meta?.facilityCode,
@@ -134,6 +155,8 @@ export default function OrderSubmissionPage() {
   const getFacilityName = () => {
     return catalogItems.length ? catalogItems[0].facilityName : '';
   };
+
+  console.log({ errors });
 
   return (
     <div className="flex flex-col lg:mt-[80px] lg:mb-8 mx-auto w-fit pl-10 lg:pl-6 pr-6 bg-white border rounded-3xl">
@@ -256,16 +279,6 @@ export default function OrderSubmissionPage() {
                   </select>
                 </div>
               </div>
-              <div className='flex justify-end'>
-                <button
-                  type="button"
-                  className='btn-primary w-60 h-9'
-                  disabled={isProcessing}
-                  onClick={onAddEquipment}
-                >
-                  + Add Equipment
-                </button>
-              </div>
               {fields.map((field, index) => (
                 <div className="flex space-x-4 gap-4" key={field.id}>
                   <div className="flex-1">
@@ -278,7 +291,7 @@ export default function OrderSubmissionPage() {
                       value={field.item}
                       onChange={(e) => update(index, { item: e.target.value, qty: field.qty })}
                     >
-                      <option value="">Please choose an equipment</option>
+                      <option value="">Please choose equipment</option>
                       {catalogItems.map(item => (
                         <option key={item.orderCode} value={item.orderCode}>{item.itemName}</option>
                       ))}
@@ -290,23 +303,38 @@ export default function OrderSubmissionPage() {
                       <label className="block text-sm font-medium mb-1 text-left">
                         Quantity
                       </label>
-                      <select
-                        className={`input-field`}
-                        disabled={isProcessing}
-                        value={field.qty}
-                        onChange={(e) => update(index, { item: field.item, qty: Number(e.target.value) })}
-                      >
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                      </select>
+                      <div className='flex gap-2'>
+                        <select
+                          className={`input-field`}
+                          disabled={isProcessing}
+                          value={field.qty}
+                          onChange={(e) => update(index, { item: field.item, qty: Number(e.target.value) })}
+                        >
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                        </select>
+                        <button type='button' className='btn-danger h-8 self-end mb-0.5' onClick={() => onRemoveEquipment(field.id)}>
+                          <FontAwesomeIcon icon={faMinus} />
+                        </button>
+                      </div>
                     </div>
-                    <button type='button' className='btn-danger h-8 self-end mb-0.5' onClick={() => onRemoveEquipment(field.id)}>
-                      <FontAwesomeIcon icon={faMinus} />
-                    </button>
                   </div>
                 </div>
               ))}
+              <div className='flex justify-end'>
+                <div>
+                  <button
+                    type="button"
+                    className='btn-primary w-60 h-9'
+                    disabled={isProcessing}
+                    onClick={onAddEquipment}
+                  >
+                    + Add Equipment
+                  </button>
+                  <ErrorText>{errors.root?.equipments?.message}</ErrorText>
+                </div>
+              </div>
               <div className='flex space-x-4'>
                 <div className="flex-1">
                   <label className="block text-sm font-medium mb-1 text-left">
@@ -314,7 +342,7 @@ export default function OrderSubmissionPage() {
                   </label>
                   <textarea
                     className={`textarea-field`}
-                    placeholder="Your comment here"
+                    placeholder="Your comment here (50 character max)"
                     disabled={isProcessing}
                     {...register('specialInstructions')}
                     maxLength={50}
@@ -323,7 +351,7 @@ export default function OrderSubmissionPage() {
               </div>
             </div>
           </div>
-          <ErrorText>{errors.root?.server.message}</ErrorText>
+          <ErrorText>{errors.root?.server?.message}</ErrorText>
           <div className='flex justify-between mt-4 '>
             <Link to="/order/list" className='flex items-center gap-1 text-md'>
               <FontAwesomeIcon icon={faArrowLeft} />
@@ -334,6 +362,7 @@ export default function OrderSubmissionPage() {
                 type="submit"
                 className="btn-warning w-40"
                 disabled={isProcessing}
+                onClick={onClickSubmit}
               >
                 {isProcessing && <Spinner />}
                 Submit

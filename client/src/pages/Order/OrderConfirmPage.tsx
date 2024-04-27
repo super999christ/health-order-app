@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderConfirmPage() {
-  const [orderId, setOrderId] = useState('');
+  const [, setOrderId] = useState('');
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function OrderConfirmPage() {
   };
 
   const onViewOrder = () => {
-    navigate(`/order/view/${orderId}`);
+    navigate(`/order/list`);
   };
   
   return (
