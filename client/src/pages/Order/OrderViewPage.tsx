@@ -54,7 +54,8 @@ export default function OrderViewPage() {
   };
 
   const getPatientName = () => {
-    return patient?.name?.find((name) => name.use === "usual")?.text;
+    var name = patient?.name?.find((name) => name.use === "usual")?.text
+    return name.split(' ')[0][0] + 'xxxxx' + ' ' + name.split(' ')[1][0] + 'xxxxx';
   };
 
   const getPatientRoom = () => {
@@ -109,7 +110,7 @@ export default function OrderViewPage() {
               alt="User"
             />
           </div>
-          <h1 className="text-2xl leading-snug font-semibold bg-[#1a75a3] text-white w-full p-2 text-left rounded-sm">
+          <h1 className="text-2xl leading-snug font-semibold bg-[#01426A] text-white w-full p-2 text-left rounded-sm">
             View Order #{orderId}
           </h1>
         </div>
