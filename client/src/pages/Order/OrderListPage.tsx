@@ -56,7 +56,7 @@ export default function OrderListPage() {
   }
 
   const getColorFromOrderStatus = (orderStatus: string): ColorMode => {
-    return 'primary' || orderStatus;
+    // return 'primary' || orderStatus;
     // switch (orderStatus) {
     //   case 'Submitted':
     //     return 'primary';
@@ -130,14 +130,14 @@ export default function OrderListPage() {
               alt="User"
             />
           </div>
-          <h1 className="text-2xl leading-snug font-semibold bg-[#f09049] text-white w-full p-2 text-left rounded-sm">
+          <h1 className="text-2xl leading-snug font-semibold bg-[#01426A] text-white w-full p-2 text-left rounded-sm">
             Explore Orders
           </h1>
         </div>
       </div>
       <div className='flex flex-col sm:px-8'>
-        <div className='flex justify-end my-4'>
-          <button type="button" className='btn-success h-full min-w-[220px] flex gap-1' onClick={onNewOrder}>
+        <div className='flex justify-start my-4'>
+          <button type="button" className='btn-agiliti-orange h-full min-w-[220px] flex gap-1' onClick={onNewOrder}>
             <FontAwesomeIcon icon={faPlus} size='lg' />
             New Order
           </button>
@@ -150,7 +150,7 @@ export default function OrderListPage() {
                   Order Date
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                  Name
+                  Requestor Name
                 </th>
                 <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                   Status
@@ -172,9 +172,7 @@ export default function OrderListPage() {
                   <td className="whitespace-nowrap text-left px-3 py-4 pl-0 text-sm">{formatDateTime(order.createdDate)}</td>
                   <td className="whitespace-nowrap text-left px-3 py-4 text-sm">{order.orderedBy}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
-                    <StatusBadge color={getColorFromOrderStatus(order.orderStatus)}>
-                      {getTextFromOrderStatus(order.orderStatus)}
-                    </StatusBadge>
+                    {getTextFromOrderStatus(order.orderStatus)}
                   </td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
                     <Link to={`/order/view/${order.orderID}`} className="text-indigo-600 hover:text-indigo-900 underline">
@@ -184,12 +182,12 @@ export default function OrderListPage() {
                   <td className="text-center px-3 py-4 text-sm max-w-52">{getEquipmentName(order.requestedItem)}</td>
                   <td className="whitespace-nowrap text-center px-3 py-4 text-sm">
                     {order.orderStatus === 'Submitted' && (
-                      <button className='btn-danger w-full' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
+                      <button className='btn-agiliti-orange w-full' title="Cancel" onClick={() => onCancelOrder(order.orderID)}>
                         Cancel
                       </button>
                     )}
                     {(order.orderStatus === 'In Transit' || order.orderStatus === 'Delivered') && (
-                      <button className='btn-success w-full mt-2' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}>
+                      <button className='btn-agiliti-orange w-full mt-2' title="Request Pickup" onClick={() => onRequestPickup(order.orderID)}>
                         Pick up
                       </button>
                     )}

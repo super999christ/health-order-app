@@ -139,7 +139,8 @@ export default function OrderSubmissionPage() {
   };
 
   const getPatientName = () => {
-    return patient?.name?.find((name) => name.use === "usual")?.text;
+    var name = patient?.name?.find((name) => name.use === "usual")?.text
+    return name.split(' ')[0][0] + 'xxxxx' + ' ' + name.split(' ')[1][0] + 'xxxxx';
   };
 
   const getPatientRoom = () => {
@@ -176,9 +177,6 @@ export default function OrderSubmissionPage() {
           <h1 className="text-2xl leading-snug font-semibold bg-[#0a4069] text-white w-full p-2 text-left rounded-sm">
             Create Order
           </h1>
-          <div className="text-sm mt-2 text-left">
-            Creating a new healthcare order has never been easier. Simply select the type of order you need and fill out the quick form to submit your request.
-          </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} action='#'>
           <div className='font-medium'>
@@ -322,11 +320,11 @@ export default function OrderSubmissionPage() {
                   </div>
                 </div>
               ))}
-              <div className='flex justify-end'>
+              <div className='flex justify-start'>
                 <div>
                   <button
                     type="button"
-                    className='btn-primary w-60 h-9'
+                    className='btn-agiliti-orange w-60 h-9'
                     disabled={isProcessing}
                     onClick={onAddEquipment}
                   >
@@ -360,7 +358,7 @@ export default function OrderSubmissionPage() {
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="btn-warning w-40"
+                className="btn-agiliti-orange w-40"
                 disabled={isProcessing}
                 onClick={onClickSubmit}
               >
