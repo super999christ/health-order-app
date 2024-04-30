@@ -56,7 +56,7 @@ export default function OrderListPage() {
   }
 
   const getColorFromOrderStatus = (orderStatus: string): ColorMode => {
-    // return 'primary' || orderStatus;
+    return 'primary' || orderStatus;
     // switch (orderStatus) {
     //   case 'Submitted':
     //     return 'primary';

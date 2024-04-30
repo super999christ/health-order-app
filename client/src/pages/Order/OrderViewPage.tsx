@@ -55,6 +55,9 @@ export default function OrderViewPage() {
 
   const getPatientName = () => {
     var name = patient?.name?.find((name) => name.use === "usual")?.text
+    if (!name) {
+      return name;
+    }
     return name.split(' ')[0][0] + 'xxxxx' + ' ' + name.split(' ')[1][0] + 'xxxxx';
   };
 
