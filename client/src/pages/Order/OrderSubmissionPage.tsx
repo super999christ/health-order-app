@@ -315,7 +315,7 @@ export default function OrderSubmissionPage() {
                           <option value={2}>2</option>
                           <option value={3}>3</option>
                         </select>
-                        <button type='button' className='btn-danger h-8 self-end mb-0.5' onClick={() => onRemoveEquipment(field.id)}>
+                        <button type='button' className='btn-agiliti-orange h-8 self-end mb-0.5' onClick={() => onRemoveEquipment(field.id)}>
                           <FontAwesomeIcon icon={faMinus} />
                         </button>
                       </div>
@@ -331,7 +331,7 @@ export default function OrderSubmissionPage() {
                     disabled={isProcessing}
                     onClick={onAddEquipment}
                   >
-                    + Add Equipment
+                    Please add equipment
                   </button>
                   <ErrorText>{errors.root?.equipments?.message}</ErrorText>
                 </div>

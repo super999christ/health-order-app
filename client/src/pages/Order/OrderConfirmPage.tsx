@@ -73,12 +73,12 @@ export default function OrderConfirmPage() {
             </div>
           </div>
           <button
-            className={`btn-success mt-4 w-full`}
+            className={`btn-agiliti-orange mt-4 w-full`}
             onClick={onViewOrder}
             disabled={isLoading || !!error}
           >
             <FontAwesomeIcon icon={faEye} size='lg' className='mr-1' />
-            View
+            View All Orders
           </button>
         </form>
       </div>
