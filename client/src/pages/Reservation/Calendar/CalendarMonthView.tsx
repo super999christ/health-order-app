@@ -1,6 +1,10 @@
 import { Bullet } from "@root/components/Bullet";
+import { useFhirContext } from "@root/hooks/useFhirContext";
+import { hasUserAccessPage } from "@root/utils/auth";
 import { isSelectedDate, isToday } from "@root/utils/date";
 import { classNames } from "@root/utils/style";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 interface ICalendarMonthViewProps {
   days: any[];
@@ -15,6 +19,14 @@ interface ICalendarMonthViewProps {
 }
 
 export default function CalendarMonthView({ days, year, month, day, setYear, setMonth, setDay, onViewEvent, setViewAllEvents }: ICalendarMonthViewProps) {
+  const { userAccess } = useFhirContext();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
+  
   const onSelectDay = (dayItem: any) => {
     setYear(dayItem.date.getFullYear());
     setMonth(dayItem.date.getMonth());

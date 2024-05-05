@@ -6,6 +6,7 @@ import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
 import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
+import { hasUserAccessPage } from '@root/utils/auth';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +15,12 @@ export default function OrderConfirmPage() {
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { patient } = useFhirContext();
+  const { patient, userAccess } = useFhirContext();
+
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     if (!patient)

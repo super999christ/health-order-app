@@ -1,0 +1,20 @@
+{
+    "users": [
+        {
+            "id": "Practitioner/e6aw6-RJuKO2mbqjleKvgVQ3",
+            "access": "none"
+        },
+        {
+            "id": "Practitioner/testing-user-id1",
+            "access": "order"
+        },
+        {
+            "id": "Practitioner/testing-user-id2",
+            "access": "scheduler"
+        },
+        {
+            "id": "Practitioner/testing-user-id3",
+            "access": "full"
+        }
+    ]
+}

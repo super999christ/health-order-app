@@ -11,6 +11,7 @@ const Environment = {
     GET_LATEST_ORDER_BY_PATIENT: '/api/common/GetLatestOrderByPatient',
     LOGIN: '/api/common/login',
     ROTATE_TOKEN: '/api/common/token-refresh',
+    USER_ACCESS: '/api/common/user-access',
     CREATE_RESERVATION: '/api/agility/reservationapi/scheduler/api/newreservations',
     GET_RESERVATIONS: '/api/agility/reservationapi/scheduler/api/getreservations',
     GET_PHYSICIANS: '/api/agility/reservationapi/scheduler/api/getphysicians',

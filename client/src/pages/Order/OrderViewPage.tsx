@@ -9,6 +9,7 @@ import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IOrder } from '@root/types/order.type';
 import { IProductCatatogItem } from '@root/types/product.type';
+import { hasUserAccessPage } from '@root/utils/auth';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Nullable } from 'vitest';
@@ -16,11 +17,16 @@ import { Nullable } from 'vitest';
 export default function OrderViewPage() {
   const [isLoading, setLoading] = useState(true);
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
-  const { patient, encounter, fhirClient, meta } = useFhirContext();
+  const { patient, encounter, fhirClient, meta, userAccess } = useFhirContext();
   const { orderId } = useParams();
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<Nullable<IOrder>>();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     const facilityCode = meta?.facilityCode;

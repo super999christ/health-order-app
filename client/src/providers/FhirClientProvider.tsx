@@ -1,6 +1,7 @@
+import { apiClient } from '@root/constants/api';
 import Environment from '@root/constants/base';
 import HomePage from '@root/pages/HomePage';
-import { IEncounter, IFhirClientContextProps, IFhirClientMeta, IPatient } from '@root/types/fhir.type';
+import { IEncounter, IFhirClientContextProps, IFhirClientMeta, IPatient, IUserAccess } from '@root/types/fhir.type';
 import { oauth2 as SMART } from 'fhirclient';
 import Client from 'fhirclient/lib/Client';
 import { PropsWithChildren, createContext, useEffect, useState } from 'react';
@@ -23,8 +24,14 @@ export const FhirClientContext = createContext<IFhirClientContextProps>({
   isFhirLoggedIn: false,
   patient: null,
   encounter: null,
-  meta: null
+  meta: null,
+  userAccess: 'none'
 });
+
+export const getUserAccess = async (fhirUserId: string) => {
+  const response = await apiClient.get(`${Environment.API.USER_ACCESS}?userid=${fhirUserId}`);
+  return response;
+};
 
 const syncSessionStorage = () => {
   // LocalStorage variables
@@ -51,6 +58,7 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
   const [patient, setPatient] = useState<Nullable<IPatient>>(null);
   const [encounter, setEncounter] = useState<Nullable<IEncounter>>(null);
   const [meta, setMeta] = useState<Nullable<IFhirClientMeta>>(null);
+  const [userAccess, setUserAccess] = useState<IUserAccess>('none');
 
   useEffect(() => {
     syncSessionStorage();
@@ -89,11 +97,18 @@ export const FhirClientProvider = ({ children }: PropsWithChildren) => {
         firstName: fhirClient.getState("tokenResponse.userFname") || "User",
         lastName: fhirClient.getState("tokenResponse.userLname") || "Name",
       });
+      getUserAccess(fhirClient.getFhirUser() || '')
+        .then(res => {
+          const { access } = res.data;
+          setUserAccess(access);
+        }).catch(err => {
+          console.log("User not found: ", err);
+        });
     }
   }, [fhirClient]);
 
   return (
-    <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient, patient, encounter, meta }}>
+    <FhirClientContext.Provider value={{ fhirClient, isFhirLoggedIn: !!fhirClient, patient, encounter, meta, userAccess }}>
       {fhirClient ? children : <HomePage />}
     </FhirClientContext.Provider>
   );

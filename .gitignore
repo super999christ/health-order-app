@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 client/build
+client/.env
+backend/.env
+.env

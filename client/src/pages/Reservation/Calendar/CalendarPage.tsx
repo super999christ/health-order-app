@@ -16,6 +16,8 @@ import { faChevronDown, faChevronLeft, faChevronRight } from '@fortawesome/pro-s
 import { LoadingOverlay } from '@root/components/LoadingOverlay'
 import LogoIcon from '@root/assets/images/logo.png';
 import { faPlus } from '@fortawesome/pro-regular-svg-icons'
+import { useFhirContext } from '@root/hooks/useFhirContext'
+import { hasUserAccessPage } from '@root/utils/auth'
 
 enum VIEW_UNIT {
   WEEK,
@@ -33,9 +35,15 @@ export default function CalendarPage() {
   const [reservations, setReservations] = useState<any[]>([]);
   const [reservationRawData, setReservationRawData] = useState<any[]>([]);
   const [isViewAllEvents, setViewAllEvents] = useState(true);
+  const { userAccess } = useFhirContext();
   const navigate = useNavigate();
   
   const [days, setDays] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     const fetchReservations = async () => {

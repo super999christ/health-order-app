@@ -3,12 +3,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LoadingBar } from '@root/components/LoadingBar';
 import { LogoutButton } from '@root/components/LogoutButton';
+import { useFhirContext } from '@root/hooks/useFhirContext';
+import { hasUserAccessPage } from '@root/utils/auth';
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function ReservationDetailPage() {
   const [isLoading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const { userAccess } = useFhirContext();
+  
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     setLoading(false);

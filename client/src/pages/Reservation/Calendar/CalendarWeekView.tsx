@@ -1,9 +1,12 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { isSelectedDate } from "@root/utils/date";
 import { classNames } from "@root/utils/style";
 import { DateConst } from "@root/constants/date";
+import { useFhirContext } from "@root/hooks/useFhirContext";
+import { useNavigate } from "react-router";
+import { hasUserAccessPage } from "@root/utils/auth";
 
 interface ICalendarWeekViewProps {
   days: any;
@@ -22,6 +25,14 @@ export default function CalendarWeekView({ days, year, month, day, setYear, setM
   const containerOffset = useRef(null);
 
   const isMobileDevice = useMediaQuery("only screen and (max-width : 640px)");
+
+  const { userAccess } = useFhirContext();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   const onSelectDay = (dayItem: any) => {
     setYear(dayItem.date.getFullYear());

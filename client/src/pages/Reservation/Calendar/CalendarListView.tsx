@@ -1,5 +1,9 @@
 import { Bullet } from "@root/components/Bullet";
+import { useFhirContext } from "@root/hooks/useFhirContext";
+import { hasUserAccessPage } from "@root/utils/auth";
 import dayjs from "dayjs"
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 interface ICalendarListViewProps {
   events: any;
@@ -7,6 +11,14 @@ interface ICalendarListViewProps {
 }
 
 export default function CalendarListView({ events, onViewEvent }: ICalendarListViewProps) {
+  const { userAccess } = useFhirContext();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
+  
   return (
     <section className="w-[300px]">
       <h2 className="text-base font-semibold leading-6 text-gray-900">Upcoming events</h2>

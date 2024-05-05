@@ -4,6 +4,7 @@ import { Router } from 'express';
 import { agilityApiClient } from '../constants/api';
 import { globalStore } from '../services/azure';
 import { generateAccessToken, verifyRefreshToken } from '../utils/jwt';
+import { webConfig } from '../utils/config';
 
 const commonRouter = Router();
 
@@ -55,6 +56,17 @@ commonRouter.post('/token-refresh', async (req, res) => {
   } catch (err) {
     res.status(400).send(err);
   }
+});
+
+commonRouter.get('/user-access', async (req, res) => {
+  console.log({ webConfig });
+    const userId = req.query['userid'];
+    const user = webConfig.users.find(user => user.id === userId);
+    if (!user) {
+      res.status(404).send({ message: 'User was not found' });
+    } else {
+      res.status(200).json({ access: user.access });
+    }
 });
 
 export { commonRouter };

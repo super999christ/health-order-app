@@ -2,6 +2,9 @@ import { faExternalLink } from '@fortawesome/pro-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LogoIcon from '@root/assets/images/logo.png';
 import { LogoutButton } from '@root/components/LogoutButton';
+import { useFhirContext } from '@root/hooks/useFhirContext';
+import { IUserAccess } from '@root/types/fhir.type';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 const apps = [
@@ -17,7 +20,25 @@ const apps = [
   }
 ];
 
+const getAccessibleApps = (userAccess: IUserAccess) => {
+  switch (userAccess) {
+    case 'order':
+      return [apps[0]];
+    case 'scheduler':
+      return [apps[1]];
+    case 'full':
+      return [apps[0], apps[1]];
+  }
+  return [];
+};
+
 export default function SplashPage() {
+  const { userAccess } = useFhirContext();
+  
+  const accessibleApps = useMemo(() => {
+    return getAccessibleApps(userAccess);
+  }, [userAccess]);
+
   return (
     <div className='flex flex-col lg:mt-[80px] mx-auto w-fit pl-10 lg:pl-6 pr-6 pb-10 bg-white border rounded-3xl lg:w-[850px]'>
       <LogoutButton />
@@ -34,7 +55,7 @@ export default function SplashPage() {
         </h1>
       </div>
       <div className='flex flex-col gap-4'>
-        {apps.map(app => (
+        {accessibleApps.map(app => (
           <div className='bg-white p-4 rounded-xl' key={app.id}>
             <div className='flex justify-between'>
               <div className="text-[20px]">{app.name}</div>
@@ -45,6 +66,9 @@ export default function SplashPage() {
             </div>
           </div>
         ))}
+        {!accessibleApps.length && (
+          <div className='text-xl'>User has no access to Agiliti apps</div>
+        )}
       </div>
     </div>
   );

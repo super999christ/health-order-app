@@ -11,16 +11,22 @@ import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IOrder } from '@root/types/order.type';
 import { IProductCatatogItem } from '@root/types/product.type';
 import { ColorMode } from '@root/types/ui.type';
+import { hasUserAccessPage } from '@root/utils/auth';
 import { formatDateTime } from '@root/utils/date';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function OrderListPage() {
   const navigate = useNavigate();
-  const { patient, meta } = useFhirContext();
+  const { patient, meta, userAccess } = useFhirContext();
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [isLoading, setLoading] = useState(true);
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
+
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     const PatientID = patient?.id as string;

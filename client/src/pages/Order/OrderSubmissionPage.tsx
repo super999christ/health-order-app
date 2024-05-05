@@ -11,6 +11,7 @@ import Spinner from '@root/components/Spinner';
 import Environment from '@root/constants/base';
 import { useFhirContext } from '@root/hooks/useFhirContext';
 import { IProductCatatogItem } from '@root/types/product.type';
+import { hasUserAccessPage } from '@root/utils/auth';
 import { orderCreatorPhoneNumberValidatorOptions } from '@root/validators/order-form-validation';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
@@ -30,7 +31,7 @@ export interface IEquipment {
 export default function OrderSubmissionPage() {
   const [isProcessing, setProcessing] = useState(false);
   const navigate = useNavigate();
-  const { patient, encounter, fhirClient, meta } = useFhirContext();
+  const { patient, encounter, fhirClient, meta, userAccess } = useFhirContext();
   const [catalogItems, setCatalogItems] = useState<IProductCatatogItem[]>([]);
   const [isLoading, setLoading] = useState(true);
   const { register, getValues, handleSubmit, setError, formState: { errors }, control, clearErrors, trigger } = useForm<IOrderRequest>({});
@@ -55,6 +56,11 @@ export default function OrderSubmissionPage() {
       }
     }
   });
+
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     const facilityCode = meta?.facilityCode;

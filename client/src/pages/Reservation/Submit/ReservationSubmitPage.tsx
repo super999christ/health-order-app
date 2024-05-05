@@ -16,6 +16,7 @@ import dayjs from 'dayjs';
 import ErrorWrapper from '@root/components/ErrorWrapper';
 import { combineDate, getMinimumReservationDate } from '@root/utils/date';
 import { createReservation } from '@root/apis/reservations';
+import { hasUserAccessPage } from '@root/utils/auth';
 
 export interface IReservationRequest {
   FACILITYID: string;
@@ -49,6 +50,12 @@ export default function ReservationSubmitPage() {
       COMMENTS: ""
     }
   });
+  const { userAccess } = useFhirContext();
+  
+  useEffect(() => {
+    if (!hasUserAccessPage(userAccess))
+      navigate('/splash');
+  }, [userAccess]);
 
   useEffect(() => {
     const fetchData = async () => {

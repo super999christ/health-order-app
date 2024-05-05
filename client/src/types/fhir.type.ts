@@ -2,6 +2,8 @@ import Client from "fhirclient/lib/Client";
 import { fhirclient } from "fhirclient/lib/types";
 import { Nullable } from "vitest";
 
+export type IUserAccess = 'none' | 'order' | 'scheduler' | 'full';
+
 export interface IPatient extends fhirclient.FHIR.Patient {
   name?: {
     use: string;
@@ -48,4 +50,5 @@ export interface IFhirClientContextProps {
   patient: Nullable<IPatient>;
   encounter: Nullable<IEncounter>;
   meta: Nullable<IFhirClientMeta>;
+  userAccess: IUserAccess;
 }
