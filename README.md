@@ -1,4 +1,4 @@
-# Agiliti Ordering/Reservation App
+# Health Ordering/Reservation App
 
 This app allows patients to order healthcare services and reserve appointments electronically.
 

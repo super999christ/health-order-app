@@ -246,7 +246,7 @@ export default function OrderViewPage() {
               {currentOrder?.orderStatus === 'Submitted' && (
                 <button
                   type='button'
-                  className="btn-agiliti-orange w-32"
+                  className="btn-health-orange w-32"
                   onClick={onCancelOrder}
                 >
                   Cancel

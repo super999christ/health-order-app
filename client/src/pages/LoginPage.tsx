@@ -118,7 +118,7 @@ export default function LoginPage() {
             <p className="mt-8 text-center text-sm text-gray-500">
               Forgot Password?
               <br />
-              Please contact the Agiliti Service Desk at (952) 893-3289, Option 1
+              Please contact the Health Service Desk at (952) 893-3289, Option 1
             </p>
           </div>
         </div>

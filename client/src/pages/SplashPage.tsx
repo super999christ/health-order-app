@@ -51,7 +51,7 @@ export default function SplashPage() {
           />
         </div>
         <h1 className="text-2xl leading-snug font-semibold bg-[#01426A] text-white w-full p-2 text-left rounded-sm">
-          Get Started With Agiliti Apps
+          Get Started With Ordering Apps
         </h1>
       </div>
       <div className='flex flex-col gap-4'>
@@ -59,7 +59,7 @@ export default function SplashPage() {
           <div className='bg-white p-4 rounded-xl' key={app.id}>
             <div className='flex justify-between'>
               <div className="text-[20px]">{app.name}</div>
-              <Link to={app.href} className='btn-agiliti-orange !text-white flex items-center gap-1'>
+              <Link to={app.href} className='btn-health-orange !text-white flex items-center gap-1'>
                 <span>OPEN THE APP</span>
                 <FontAwesomeIcon icon={faExternalLink} />
               </Link>
@@ -67,7 +67,7 @@ export default function SplashPage() {
           </div>
         ))}
         {!accessibleApps.length && (
-          <div className='text-xl'>User has no access to Agiliti apps</div>
+          <div className='text-xl'>User has no access to Health apps</div>
         )}
       </div>
     </div>

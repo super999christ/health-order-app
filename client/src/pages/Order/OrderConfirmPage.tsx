@@ -79,7 +79,7 @@ export default function OrderConfirmPage() {
             </div>
           </div>
           <button
-            className={`btn-agiliti-orange mt-4 w-full`}
+            className={`btn-health-orange mt-4 w-full`}
             onClick={onViewOrder}
             disabled={isLoading || !!error}
           >
