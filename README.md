@@ -76,19 +76,3 @@ npm run build
 In production mode, the backend will be running on http://localhost:3000 and serve the frontend assets as well as APIs.
 
 Finally, it'll be deployed by Azure pipeline.
-
-https://epicschedulerapp-stage.azurewebsites.net/
-
-## Credentials
-
-Reservation app's login credentials
-```
-Username: SagaEMR00
-Password: SagaEMR00#
-```
-
-FHIR credentials
-```
-Username: FHIR
-Password: EpicFhir11!
-```
